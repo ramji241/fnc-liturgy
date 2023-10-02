@@ -12,10 +12,10 @@ const connectDB = require('./config/database') //#9
 const mainRoutes = require('./routes/builder')
 const builderRoutes = require('./routes/builder')
 
-require('dotenv').config({path: './config/.env'})
+// require('dotenv').config({path: './config/.env'})
 // require('./config/passport')(passport)
 
-connectDB()
+// connectDB()
 
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
@@ -40,4 +40,4 @@ app.use(express.json())
 app.use('/', builderRoutes)
 // app.use('/builder', builderRoutes)
  
-app.listen(process.env.PORT || PORT)
+app.listen(process.env.PORT || 3000)
