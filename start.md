@@ -31,7 +31,6 @@ Install MongoDB:
     $ npm i mongodb --save
 Add MongoDB connection string to .env file:
     DB_STRING = mongodb+srv://..., which is the connection string obtained from MongoDB
-<!-- Add username as DB_USER and password as DB_PASS, and put both into your .env. -->
 Install Mongoose:
     $ npm i mongoose --save
 Require Mongoose in server.js:
