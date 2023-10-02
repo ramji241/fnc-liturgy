@@ -2,8 +2,8 @@ const express = require('express') //#1
 const app = express() //#2
 const mongoose = require('mongoose') //#3
 const session = require('express-session') //#5
-// const MongoDBStore = require('connect-mongodb-session')(session) //#6
-// const connectDB = require('./config/database') //#9
+const MongoDBStore = require('connect-mongodb-session')(session) //#6
+const connectDB = require('./config/database') //#9
 
 // const passport = require('passport') //#4
 // const flash = require('express-flash') //#7
@@ -12,10 +12,10 @@ const session = require('express-session') //#5
 const mainRoutes = require('./routes/builder')
 const builderRoutes = require('./routes/builder')
 
-// require('dotenv').config({path: './config/.env'})
+require('dotenv').config({path: './config/.env'})
 // require('./config/passport')(passport)
 
-// connectDB()
+connectDB()
 
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
@@ -40,5 +40,4 @@ app.use(express.json())
 app.use('/', builderRoutes)
 // app.use('/builder', builderRoutes)
  
-// app.listen(process.env.PORT || PORT)
-app.listen(process.env.PORT || 3000)
+app.listen(process.env.PORT || PORT)
