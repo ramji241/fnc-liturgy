@@ -4,12 +4,13 @@ const mongoose = require('mongoose') //#3
 const session = require('express-session') //#5
 const MongoDBStore = require('connect-mongodb-session')(session) //#6
 const connectDB = require('./config/database') //#9
+const PORT = process.env.PORT || 3000
 
 // const passport = require('passport') //#4
 // const flash = require('express-flash') //#7
 // const logger = require('morgan') //#8
 
-const mainRoutes = require('./routes/builder')
+const mainRoutes = require('./routes/main')
 const builderRoutes = require('./routes/builder')
 
 // require('dotenv').config({path: './config/.env'})
@@ -37,7 +38,9 @@ app.use(express.json())
 
 // app.use(flash())
   
-app.use('/', builderRoutes)
-// app.use('/builder', builderRoutes)
+app.use('/', mainRoutes)
+app.use('/builder', builderRoutes)
  
-app.listen(process.env.PORT || 3000)
+app.listen(PORT, () => {
+    console.log("listening for requests");
+})

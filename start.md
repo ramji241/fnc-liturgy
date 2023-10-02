@@ -19,10 +19,14 @@ Add Nodemon to the script key in package.json:
 <!-- From now on, you can run server.js by typing: $ npm run start -->
 Install .dotenv:
     $ npm i dotenv --save
-Require the .env file in server.js:
-    require('dotenv').config({path: './config/.env})
-Create /config/.env and setup your default port:
-    PORT = 3000
+<!-- Require the .env file in server.js:
+    require('dotenv').config({path: './config/.env}) -->
+Add dotenv as a dependency:
+    $ npm i -D dotenv
+<!-- Create /config/.env and setup your default port:
+    PORT = 3000 -->
+Declare PORT in server.js:
+    const PORT = process.env.PORT || 3000 <!-- Or a different port number of your choosing -->
 
 # models
 

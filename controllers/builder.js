@@ -1,4 +1,4 @@
-const Liturgy = require('../models/liturgy')
+const Liturgy = require('../models/Liturgy')
 
 module.exports = {
     buildLiturgy: async (req,res)=>{
