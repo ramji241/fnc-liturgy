@@ -12,7 +12,93 @@
 </head>
 <body>
     <header>
-        <form>
+        <form action="/builder/" method="POST">
+            <input type="date" name="date" id="dateOfWorship">
+            <% console.log(order) %>
+            <% if (order.length !== 0) { %>
+                <ol>
+                    <% order.forEach(element => { %>
+                        <li class="orderElement" data-id="<%= element._id%>">
+                            <select>
+                                <option value=""><%= element.elementType %></option>
+                                <optgroup label="Scripture">
+                                    <option value="">Memory Verse</option>
+                                    <option value="">Call to Worship</option>
+                                    <option value="">Conviction of Sin</option>
+                                    <option value="">Confession of Sin</option>
+                                    <option value="">Assurance of Pardon</option>
+                                    <option value="">Invitation to Pray</option>
+                                    <option value="">Reading of the Word</option>
+                                    <option value="">Baptism</option>
+                                    <option value="">Confirmation</option>
+                                    <option value="">The Lord's Supper</option>
+                                    <option value="">Offering</option>
+                                    <option value="">Benediction</option>
+                                </optgroup>
+                                <optgroup label="Praise">
+                                    <option value="">Songs of Adoration</option>
+                                    <option value="">Songs of Praise</option>
+                                    <option value="">Songs of Thanksgiving</option>
+                                </optgroup>
+                                <optgroup label="Creeds & Confessions">
+                                    <option value="">The Apostle's Creed</option>
+                                    <option value="">The Nicene Creed</option>
+                                    <option value="">Heidelberg Catechism</option>
+                                    <option value="">Westminster Shorter Catechism</option>
+                                    <option value="">Westminster Larger Catechism</option>
+                                </optgroup>
+                            </select>
+                            <input type="text" value="<%= element.elementRef %>" placeholder="Eph 2.8-10">
+                            <span class="moveUp"></span>
+                            <span class="moveDown"></span>
+                            <span class="addNew"></span>
+                            <span class="delete"></span>
+                        </li>
+                    <% }) %>
+                </ol>
+            <% } else { %>
+                <ol>
+                    <li class="orderElement">
+                            <select>
+                                <optgroup label="Scripture">
+                                    <option value="">Memory Verse</option>
+                                    <option value="">Call to Worship</option>
+                                    <option value="">Conviction of Sin</option>
+                                    <option value="">Confession of Sin</option>
+                                    <option value="">Assurance of Pardon</option>
+                                    <option value="">Invitation to Pray</option>
+                                    <option value="">Reading of the Word</option>
+                                    <option value="">Baptism</option>
+                                    <option value="">Confirmation</option>
+                                    <option value="">The Lord's Supper</option>
+                                    <option value="">Offering</option>
+                                    <option value="">Benediction</option>
+                                </optgroup>
+                                <optgroup label="Praise">
+                                    <option value="">Songs of Adoration</option>
+                                    <option value="">Songs of Praise</option>
+                                    <option value="">Songs of Thanksgiving</option>
+                                </optgroup>
+                                <optgroup label="Creeds & Confessions">
+                                    <option value="">The Apostle's Creed</option>
+                                    <option value="">The Nicene Creed</option>
+                                    <option value="">Heidelberg Catechism</option>
+                                    <option value="">Westminster Shorter Catechism</option>
+                                    <option value="">Westminster Larger Catechism</option>
+                                </optgroup>
+                            </select>
+                            <input type="text" placeholder="Eph 2.8-10">
+                            <span class="moveUp"></span>
+                            <span class="moveDown"></span>
+                            <span class="addNew"></span>
+                            <span class="delete"></span>
+                        </li>
+                    </ol>
+            <% } %>
+            <button type="button">Submit</button>
+        </form>
+        
+        <!-- <form>
             <label for="callToWorship">Call to Worship</label>
             <input id="callToWorship" type="text" placeholder="Eph 2.8-10">
         </form><form>
@@ -27,8 +113,8 @@
         </form><form>
             <label for="readingOfTheWord">Reading of the Word</label>
             <input id="readingOfTheWord" type="text" placeholder="Eph 2.8-10">
-        </form>
-        <button type="button">Submit</button>
+        </form> -->
+        
     </header>
     <main>
         <h1><span>Order of Worship</span><span id="dateWorship">17 September 2023</span></h1>

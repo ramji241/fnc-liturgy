@@ -1,12 +1,14 @@
 const express = require('express')
 const router = express.Router()
 const builderController = require('../controllers/builder') 
+const builder = require('../controllers/builder')
 // const { ensureAuth } = require('../middleware/auth')
 
 // router.get('/', ensureAuth, todosController.getTodos)
-router.get('/', builderController.buildLiturgy)
 
-// router.post('/createTodo', todosController.createTodo)
+router.get('/', builderController.getLiturgy)
+
+// router.post('/buildLiturgy', builderController.defaultLiturgy)
 
 // router.put('/markComplete', todosController.markComplete)
 

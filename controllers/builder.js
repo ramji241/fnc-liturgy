@@ -1,13 +1,23 @@
 const Liturgy = require('../models/Liturgy')
 
 module.exports = {
-    buildLiturgy: async (req,res)=>{
-        // console.log(req.user)
+    getLiturgy: async (req,res)=>{
+        let orderOfWorship = [
+            {elementType: 'Memory Verse', elementRef: undefined, elementOrder: 0}, 
+            {elementType: 'Call to Worship', elementRef: undefined, elementOrder: 1}, 
+            {elementType: 'Songs of Adoration', elementRef: undefined, elementOrder: 2}, 
+            {elementType: 'Conviction of Sin', elementRef: undefined, elementOrder: 3}, 
+            {elementType: 'Assurance of Pardon', elementRef: undefined, elementOrder: 4}, 
+            {elementType: 'Songs of Praise', elementRef: undefined, elementOrder: 5}, 
+            {elementType: 'Invitation to Pray', elementRef: undefined, elementOrder: 6}, 
+            {elementType: 'Reading of the Word', elementRef: undefined, elementOrder: 7}, 
+            {elementType: 'Songs of Thanksgiving', elementRef: undefined, elementOrder: 8}
+        ]
         try{
-            // const todoItems = await Todo.find({userId:req.user.id})
-            // const itemsLeft = await Todo.countDocuments({userId:req.user.id,completed: false})
-            // res.render('builder.ejs', {todos: todoItems, left: itemsLeft, user: req.user})
-            res.render('builder.ejs')
+            if (req.body.date) {
+                orderOfWorship = await Liturgy.find(lookupDate).sort({elementOrder: 1})
+            }
+            res.render('builder.ejs', {order: orderOfWorship})
         }catch(err){
             console.log(err)
         }
