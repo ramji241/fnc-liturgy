@@ -9,155 +9,69 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=PT+Serif&family=Ubuntu&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/0b75e0e2be.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <header>
-        <form action="/builder/" method="POST">
-            <input type="date" name="date" id="dateOfWorship">
-            <% console.log(order) %>
-            <% if (order.length !== 0) { %>
-                <ol>
+        <form id="builder" action="/builder/" method="POST">
+            <div class="date-container">
+                <label for="date">Date of Worship Event:</label>
+                <input type="date" name="date" id="dateOfWorship">
+                <button class="draft" type="button" name="draft" formaction="">Draft</button>
+                <button type="submit" name="submit">Submit</button>
+            </div>
+            <ol class="liturgy">
+                <% if (order.length !== 0) { %>
                     <% order.forEach(element => { %>
-                        <li class="orderElement" data-id="<%= element._id%>">
-                            <select>
-                                <option value=""><%= element.elementType %></option>
-                                <optgroup label="Scripture">
-                                    <option value="">Memory Verse</option>
-                                    <option value="">Call to Worship</option>
-                                    <option value="">Conviction of Sin</option>
-                                    <option value="">Confession of Sin</option>
-                                    <option value="">Assurance of Pardon</option>
-                                    <option value="">Invitation to Pray</option>
-                                    <option value="">Reading of the Word</option>
-                                    <option value="">Baptism</option>
-                                    <option value="">Confirmation</option>
-                                    <option value="">The Lord's Supper</option>
-                                    <option value="">Offering</option>
-                                    <option value="">Benediction</option>
-                                </optgroup>
-                                <optgroup label="Praise">
-                                    <option value="">Songs of Adoration</option>
-                                    <option value="">Songs of Praise</option>
-                                    <option value="">Songs of Thanksgiving</option>
-                                </optgroup>
-                                <optgroup label="Creeds & Confessions">
-                                    <option value="">The Apostle's Creed</option>
-                                    <option value="">The Nicene Creed</option>
-                                    <option value="">Heidelberg Catechism</option>
-                                    <option value="">Westminster Shorter Catechism</option>
-                                    <option value="">Westminster Larger Catechism</option>
-                                </optgroup>
+                        <li class="orderElement" data-id="<%= element._id%>" data-sort="" data-order="<%= element.elementOrder %>">
+                            <select class="type">
+                                <option value="Scripture" <%= element.elementType === 'Scripture' ? 'selected' : '' %>>Scripture</option>
+                                <option value="Prayer" <%= element.elementType === 'Prayer' ? 'selected' : '' %>>Prayer</option>
+                                <option value="Song" <%= element.elementType === 'Song' ? 'selected' : '' %>>Song</option>
+                                <option value="Confession" <%= element.elementType === 'Confession' ? 'selected' : '' %>>Confession</option>
+                                <option value="Other" <%= element.elementType === 'Other' ? 'selected' : '' %>>Other</option>
                             </select>
-                            <input type="text" value="<%= element.elementRef %>" placeholder="Eph 2.8-10">
-                            <span class="moveUp"></span>
-                            <span class="moveDown"></span>
-                            <span class="addNew"></span>
-                            <span class="delete"></span>
+                            <select class="subtype">
+                                <% if (element.elementType === 'Scripture') { %>
+                                    <option value="Memory Verse" <%= element.elementSubtype === 'Memory Verse' ? 'selected' : '' %>>Memory Verse</option>
+                                    <option value="Call to Worship" <%= element.elementSubtype === 'Call to Worship' ? 'selected' : '' %>>Call to Worship</option>
+                                    <option value="Conviction of Sin" <%= element.elementSubtype === 'Conviction of Sin' ? 'selected' : '' %>>Conviction of Sin</option>
+                                    <option value="Confession of Sin" <%= element.elementSubtype === 'Confession of Sin' ? 'selected' : '' %>>Confession of Sin</option>
+                                    <option value="Assurance of Pardon" <%= element.elementSubtype === 'Assurance of Pardon' ? 'selected' : '' %>>Assurance of Pardon</option>
+                                    <option value="Invitation to Pray" <%= element.elementSubtype === 'Invitation to Pray' ? 'selected' : '' %>>Invitation to Pray</option>
+                                    <option value="Reading of the Word" <%= element.elementSubtype === 'Reading of the Word' ? 'selected' : '' %>>Reading of the Word</option>
+                                    <option value="Baptism" <%= element.elementSubtype === 'Baptism' ? 'selected' : '' %>>Baptism</option>
+                                    <option value="Confirmation" <%= element.elementSubtype === 'Confirmation' ? 'selected' : '' %>>Confirmation</option>
+                                    <option value="The Lord's Supper" <%= element.elementSubtype === "The Lord's Supper" ? 'selected' : '' %>>The Lord's Supper</option>
+                                    <option value="Offering" <%= element.elementSubtype === 'Offering' ? 'selected' : '' %>>Offering</option>
+                                    <option value="Benediction" <%= element.elementSubtype === 'Benediction' ? 'selected' : '' %>>Benediction</option>
+                                <% } else if (element.elementType === 'Song') { %>
+                                    <option value="Songs of Adoration" <%= element.elementSubtype === 'Songs of Adoration' ? 'selected' : '' %>>Songs of Adoration</option>
+                                    <option value="Songs of Praise" <%= element.elementSubtype === 'Songs of Praise' ? 'selected' : '' %>>Songs of Praise</option>
+                                    <option value="Songs of Thanksgiving" <%= element.elementSubtype === 'Songs of Thanksgiving' ? 'selected' : '' %>>Songs of Thanksgiving</option>
+                                <% } else if (element.elementType === 'Confession') {%>
+                                    <option value="Apostle's Creed" <%= element.elementSubtype === "Apostle's Creed" ? 'selected' : '' %>>Apostle's Creed</option>
+                                    <option value="Nicene Creed" <%= element.elementSubtype === 'Nicene Creed' ? 'selected' : '' %>>Nicene Creed</option>
+                                    <option value="Heidelberg Catechism" <%= element.elementSubtype === 'Heidelberg Catechism' ? 'selected' : '' %>>Heidelberg Catechism</option>
+                                    <option value="Westminster Shorter Catechism" <%= element.elementSubtype === 'Westminster Shorter Catechism' ? 'selected' : '' %>>Westminster Shorter Catechism</option>
+                                    <option value="Westminster Larger Catechism" <%= element.elementSubtype === 'Westminster Larger Catechism' ? 'selected' : '' %>>Westminster Larger Catechism</option>
+                                <% } %>
+                            </select>
+                            <input class= "ref" type="text" value="<%= element.elementRef %>" placeholder="<%= element.elementRef %>">
+                            <div class="container">
+                                <i class="fa-solid fa-up-long up"></i>
+                                <i class="fa-solid fa-down-long down"></i>
+                                <i class="fa-solid fa-plus add"></i>
+                                <i class="fa-regular fa-trash-can del"></i>
+                            </div>
                         </li>
                     <% }) %>
-                </ol>
-            <% } else { %>
-                <ol>
-                    <li class="orderElement">
-                            <select>
-                                <optgroup label="Scripture">
-                                    <option value="">Memory Verse</option>
-                                    <option value="">Call to Worship</option>
-                                    <option value="">Conviction of Sin</option>
-                                    <option value="">Confession of Sin</option>
-                                    <option value="">Assurance of Pardon</option>
-                                    <option value="">Invitation to Pray</option>
-                                    <option value="">Reading of the Word</option>
-                                    <option value="">Baptism</option>
-                                    <option value="">Confirmation</option>
-                                    <option value="">The Lord's Supper</option>
-                                    <option value="">Offering</option>
-                                    <option value="">Benediction</option>
-                                </optgroup>
-                                <optgroup label="Praise">
-                                    <option value="">Songs of Adoration</option>
-                                    <option value="">Songs of Praise</option>
-                                    <option value="">Songs of Thanksgiving</option>
-                                </optgroup>
-                                <optgroup label="Creeds & Confessions">
-                                    <option value="">The Apostle's Creed</option>
-                                    <option value="">The Nicene Creed</option>
-                                    <option value="">Heidelberg Catechism</option>
-                                    <option value="">Westminster Shorter Catechism</option>
-                                    <option value="">Westminster Larger Catechism</option>
-                                </optgroup>
-                            </select>
-                            <input type="text" placeholder="Eph 2.8-10">
-                            <span class="moveUp"></span>
-                            <span class="moveDown"></span>
-                            <span class="addNew"></span>
-                            <span class="delete"></span>
-                        </li>
-                    </ol>
-            <% } %>
-            <button type="button">Submit</button>
+                <% } %>
+            </ol>
+            <button class="reset" type="reset" name="rest" form="builder" formaction="">Reset</button>
         </form>
-        
-        <!-- <form>
-            <label for="callToWorship">Call to Worship</label>
-            <input id="callToWorship" type="text" placeholder="Eph 2.8-10">
-        </form><form>
-            <label for="convictionOfSin">Conviction of Sin</label>
-            <input id="convictionOfSin" type="text" placeholder="Eph 2.8-10">
-        </form><form>
-            <label for="assuranceOfPardon">Assurance of Pardon</label>
-            <input id="assuranceOfPardon" type="text" placeholder="Eph 2.8-10">
-        </form><form>
-            <label for="invitationToPray">Invitation to Pray</label>
-            <input id="invitationToPray" type="text" placeholder="Eph 2.8-10">
-        </form><form>
-            <label for="readingOfTheWord">Reading of the Word</label>
-            <input id="readingOfTheWord" type="text" placeholder="Eph 2.8-10">
-        </form> -->
-        
     </header>
-    <main>
-        <h1><span>Order of Worship</span><span id="dateWorship">17 September 2023</span></h1>
-        <h2 class="liturgyElement">Call to Worship</h2>
-        <p class="liturgyDefinition">God summons his people to worship him in Spirit and in Truth. We are lifted up to the throne room of heaven to the very presence of God.</p>
-        <section id="callToWorshipHTML"></section>
-        <h2 class="liturgyElement">Songs of Adoration</h2>
-        <p class="liturgyDefinition">We join our voices with the choir of heaven, worshiping God for who he is.</p>
-        <h2 class="liturgyElement">Conviction of Sin</h2>
-        <p class="liturgyDefinition">God reminds us that he is holy, and that whoever would approach him must likewise be holy. We are therefore confronted with our sins.</p>
-        <section id="convictionOfSinHTML"></section>
-        <h2 class="liturgyElement">Confession of Sin</h2>
-        <p class="liturgyDefinition">We repent of our sins, confessing them to God and endeavoring with his help to be more mindful in the future.</p>
-        <h2 class="liturgyElement">Assurance of Pardon</h2>
-        <p class="liturgyDefinition">God reminds us that he is faithful and eager to forgive all who come to him through faith in Jesus Christ.</p>
-        <section id="assuranceOfPardonHTML"></section>
-        <h2 class="liturgyElement">Songs of Praise</h2>
-        <p class="liturgyDefinition">We leap for joy in our hearts and sing to God in praise for such undeserved grace.</p>
-        <h2 class="liturgyElement">Invitation to Pray</h2>
-        <p class="liturgyDefinition">God invites us to cast all our anxieties and necessities on him, because he cares for us.</p>
-        <section id="invitationToPrayHTML"></section>
-        <h2 class="liturgyElement">Prayer of the Congregation</h2>
-        <p class="liturgyDefinition">We lay bare our hearts to God, committing our hopes and fears, our needs and desires, into his wise and capable hands.</p>
-        <h2 class="liturgyElement">Reading of the Word</h2>
-        <p class="liturgyDefinition">God speaks to us through his Word.</p>
-        <section id="readingOfTheWordHTML"></section>
-        <h2 class="liturgyElement">Prayer for Illumination</h2>
-        <p class="liturgyDefinition">Having hearts that are still slow to believe, we ask God for help &#45; that by his Holy Spirit we would be able to hear his Word and do what it says.</p>
-        <h2 class="liturgyElement">Preaching of the Word</h2>
-        <p class="liturgyDefinition">God speaks to us through his messenger, telling us once again who he is, what he has done, and what he requires of us.</p>
-        <h2 class="liturgyElement">Baptism</h2>
-        <p class="liturgyDefinition">God seals his promise to us — that just as water washes away dirt, he will wash away sin from all who receive the gospel in faith, by the blood of Jesus through the Holy Spirit.</p>
-        <h2 class="liturgyElement">Confirmation</h2>
-        <p class="liturgyDefinition">We embrace for ourselves the faith of our parents, confessing with our mouths that Jesus is Lord,  believing in our hearts that God raised him from the dead, and resting in the Spirit for the forgiveness and fruit promised in the gospel of grace.</p>
-        <h2 class="liturgyElement">The Lord's Supper</h2>
-        <p class="liturgyDefinition">God addresses our other senses, allowing us to see, touch, taste, and smell the Gospel of Jesus Christ. We sit down at the table of fellowship with him, enjoying the peace in which we now stand and remembering what it cost.</p>
-        <h2 class="liturgyElement">Songs of Thanksgiving</h2>
-        <p class="liturgyDefinition">We give God the praise that is his due: for who he is, what he has done, and what he continues to do for us in Christ Jesus through the Holy Spirit.</p>
-        <h2 class="liturgyElement">Offering</h2>
-        <p class="liturgyDefinition">We continue our grateful response by giving God a token of what he has graciously given to us, acknowledging that everything we are and everything we have comes from him and belongs to him.</p>
-        <h2 class="liturgyElement">Benediction</h2>
-        <p class="liturgyDefinition">God places his name upon us and sends us back into this fallen, sinful world with his blessing and the promise that he will be with us always.</p>
-    </main>
+    <main></main>
     <script type="text/javascript" src="js/main.js"></script>
 </body>
 </html>

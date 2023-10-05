@@ -6,6 +6,10 @@ const ElementSchema = new mongoose.Schema(
       type: String,
       required: false
     },
+    elementSubtype: {
+      type: String,
+      required: false
+    },
     elementRef: {
       type: String,
       required: false

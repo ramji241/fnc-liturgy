@@ -64,14 +64,60 @@ html {
 
 body {
     display: flex;
+    justify-content: space-evenly;
 }
 
 header {
+    flex-basis: 40%;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+div.date-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+div.date-container > input {
     flex-basis: 30%;
 }
 
+div.date-container > button {
+    flex-basis: 20%;
+}
+
+ol li {
+    display: flex;
+    justify-content: space-between;
+    /* flex-wrap: wrap; */
+    margin: 1% 0;
+    gap: 1%;
+}
+
+ol > li > select.type {
+    flex-basis: 15%;
+}
+
+ol > li > select.subtype {
+    flex-basis: 25%;
+}
+
+ol > li > input {
+    flex-basis: 45%;
+}
+
+ol > li > div {
+    display: flex;
+    flex-basis: 15%;
+    justify-content: space-evenly;
+}
+
 main {
-    flex-basis: 70%;
+    flex-basis: 40%;
     font-family: 'Ubuntu', sans-serif;
 }
 
