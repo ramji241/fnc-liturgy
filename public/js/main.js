@@ -146,7 +146,7 @@ function createDraft() {
                         break;
                 }
             } catch (err) {
-                el.value ? document.querySelector('main').innerHTML += `<h2>${el.value}</h2>` : document.querySelector('main').innerHTML += ''
+                console.log('Oh no! I couldn\'t find the reference!')
             }
         }
 
