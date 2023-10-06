@@ -127,31 +127,32 @@ document.querySelector('.draft').addEventListener('click', createDraft)
 function createDraft() {
     
     const selectType = document.querySelectorAll('.type')
-    const selectSubtype = document.querySelectorAll('.subtype')
-    const selectRefs = document.querySelectorAll('.ref')
+    const selectSubtype = Array.from(document.querySelectorAll('.subtype'))
+    const selectRefs = Array.from(document.querySelectorAll('.ref'))
     
     document.querySelector('main').innerHTML = ''
     
-    selectSubtype.forEach((el, i) => {
+    const getPassage = async () => {
+        const requests = selectRefs.map((el) => {
+            return getPassageRef(el.value)
+            .then((data) => data)
+            .catch((err) => err)
+        })
+        return Promise.all(requests)
+    }
         
-        const getPassage = async () => {
-            try {
-                const ref = await getPassageRef(selectRefs[i].value)
-                el.value ? document.querySelector('main').innerHTML += `<h2>${el.value}</h2>` : document.querySelector('main').innerHTML += ''
-                switch (selectType[i].value) {
-                    case 'Scripture':
-                        document.querySelector('main').innerHTML += `<section>${ref}</section>`
-                        break;
-                    default :
-                        break;
-                }
-            } catch (err) {
-                console.log('Oh no! I couldn\'t find the reference!')
+    getPassage()
+    .then((data) => {
+        selectSubtype.forEach((el, i) => {
+            el.value ? document.querySelector('main').innerHTML += `<h2>${el.value}</h2>` : document.querySelector('main').innerHTML += ''
+            switch (selectType[i].value) {
+                case 'Scripture':
+                    document.querySelector('main').innerHTML += `<section>${data[i]}</section>`
+                    break;
+                default :
+                    break;
             }
-        }
-
-        getPassage()
-                
+        })
     })
 
 }
