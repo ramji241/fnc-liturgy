@@ -4,15 +4,16 @@ const ElementSchema = new mongoose.Schema(
   {
     elementType: {
       type: String,
-      required: false
+      required: true
     },
     elementSubtype: {
       type: String,
-      required: false
+      required: false,
+      default: undefined
     },
     elementRef: {
       type: String,
-      required: false
+      required: true
     },
     elementOrder: {
       type: Number,
@@ -73,7 +74,7 @@ const LiturgySchema = new mongoose.Schema(
       default: undefined
     },
     order: {
-      type: OrderSchema
+      type: [ElementSchema]
     }
   },
   {

@@ -13,9 +13,11 @@ const PORT = process.env.PORT || 3000
 const mainRoutes = require('./routes/main')
 const builderRoutes = require('./routes/builder')
 
+require('dotenv').config({path: './config/.env'})
+
 // require('./config/passport')(passport)
 
-// connectDB()
+connectDB()
 
 app.set('view engine', 'ejs')
 app.use(express.static('public'))

@@ -56,7 +56,8 @@ window.onload = function() {
 }
 
 async function postLiturgy() {
-    const worshipDate = document.querySelector('date')
+    const worshipDate = document.querySelector('#dateOfWorship').value
+    console.log(worshipDate)
     const selectType = Array.from(document.querySelectorAll('li'))
     
     const liturgyElements = selectType.map((el) => {
@@ -66,7 +67,8 @@ async function postLiturgy() {
                 entries.set(`${child.className}`,`${child.value}`)
             }
         }
-        return entries
+        entries.set(`${el.className}`,`${el.dataset.sort}`)
+        return Object.fromEntries(entries)
     })
 
     try{
@@ -78,19 +80,24 @@ async function postLiturgy() {
                 'orderFromJSFile': liturgyElements
             })
         })
-        const data = await response.json()
+        const data = await res.json()
         console.log(data)
-        location.reload()
     }catch(err){
         console.log(err)
     }
 }
 
 function refreshSmurfs() {
-    const selectType = document.querySelectorAll('.type')
+    const selectType = document.querySelectorAll('.elementType')
     selectType.forEach((el) => {
         el.removeEventListener('change', getSubtypes)
         el.addEventListener('change', getSubtypes)
+    })
+
+    const selectSubtype = document.querySelectorAll('.elementSubtype')
+    selectSubtype.forEach((el) => {
+        el.removeEventListener('change', getRefs)
+        el.addEventListener('change', getRefs)
     })
 
     let smurfDiv = document.querySelectorAll('.container')
@@ -110,12 +117,19 @@ function popSubtypes(sel,typeVal) {
     data.types.forEach((detail, index) => {
         if (detail.type === typeVal) {
             sel.innerHTML = ''
+            sel.nextElementSibling.disabled = (typeVal === 'Confession')
             sel.append(createOption('Select header',''))
             data.types[index].subtypes.forEach((subtype) => {
                 sel.append(createOption(subtype, subtype))
             })
         }
     })
+}
+
+function getRefs(event) {
+    const ref = event.target.nextElementSibling
+    const type = event.target.previousElementSibling
+    type.value === 'Confession' ? ref.value = event.target.value : ref.value = ""
 }
 
 function createOption(displayMember, valueMember) {
@@ -127,9 +141,9 @@ function createOption(displayMember, valueMember) {
 
 function createDraft() {
     
-    const selectType = document.querySelectorAll('.type')
-    const selectSubtype = Array.from(document.querySelectorAll('.subtype'))
-    const selectRefs = Array.from(document.querySelectorAll('.ref'))
+    const selectType = document.querySelectorAll('.elementType')
+    const selectSubtype = Array.from(document.querySelectorAll('.elementSubtype'))
+    const selectRefs = Array.from(document.querySelectorAll('.elementRef'))
     
     document.querySelector('main').innerHTML = ''
     
@@ -201,12 +215,8 @@ function orderElements() {
     const container = document.querySelector('li').parentNode
     const selectOrder = Array.from(document.querySelectorAll('li'))
 
-    selectOrder.forEach((el) => console.log(el.dataset.id, el.dataset.sort))
-
     const sorted = selectOrder.sort((a,b) => Number(a.dataset.sort) - Number(b.dataset.sort))
 
-    sorted.forEach((el) => console.log(el.dataset.id, el.dataset.sort))
-    
     container.innerHTML = ''
     sorted.forEach((el) => container.append(el))
 }
@@ -245,24 +255,23 @@ function reorderLiturgy(event) {
         const container = document.querySelector('li').parentNode
         let newElement = document.createElement('li')
         container.appendChild(newElement)
-        newElement.setAttribute('class','orderElement')
+        newElement.setAttribute('class','elementOrder')
         liValue = target.dataset.sort.valueOf()
         liValue++
         newElement.setAttribute('data-sort', liValue.toString())
 
         let typeSelect = document.createElement('select')
         newElement.appendChild(typeSelect)
-        typeSelect.setAttribute('class','type')
+        typeSelect.setAttribute('class','elementType')
         data.types.forEach((value) => {
             typeSelect.appendChild(createOption(value.type, value.type))
         })
         
         let subtypeSelect = document.createElement('select')
         newElement.appendChild(subtypeSelect)
-        subtypeSelect.setAttribute('class','subtype')
+        newElement.appendChild(document.createElement('input')).setAttribute('class','elementRef')
+        subtypeSelect.setAttribute('class','elementSubtype')
         popSubtypes(subtypeSelect,typeSelect.value)
-
-        newElement.appendChild(document.createElement('input')).setAttribute('class','ref')
 
         let newDiv = document.createElement('div')
         newElement.appendChild(newDiv)

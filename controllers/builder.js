@@ -27,10 +27,11 @@ module.exports = {
         console.log(req.body.orderFromJSFile)
         try{
             await Liturgy.create({
-                date: req.body.date,
+                date: req.body.dateFromJSFile,
                 schedule: undefined,
                 order: req.body.orderFromJSFile
             })
+            res.json('Posted Liturgy!')
         }catch(err){
             console.log(err)
         }
