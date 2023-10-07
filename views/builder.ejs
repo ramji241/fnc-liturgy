@@ -13,25 +13,25 @@
 </head>
 <body>
     <header>
-        <form id="builder" action="/builder/" method="POST">
+        <form id="builder" action="" method="">
             <div class="date-container">
                 <label for="date">Date of Worship Event:</label>
                 <input type="date" name="date" id="dateOfWorship">
                 <button class="draft" type="button" name="draft" formaction="">Draft</button>
-                <button type="submit" name="submit">Submit</button>
+                <button class="submit" type="button" name="submit">Submit</button>
             </div>
             <ol class="liturgy">
                 <% if (order.length !== 0) { %>
                     <% order.forEach(element => { %>
                         <li class="orderElement" data-id="<%= element._id%>" data-sort="" data-order="<%= element.elementOrder %>">
-                            <select class="type">
+                            <select class="type" name="type">
                                 <option value="Scripture" <%= element.elementType === 'Scripture' ? 'selected' : '' %>>Scripture</option>
                                 <option value="Prayer" <%= element.elementType === 'Prayer' ? 'selected' : '' %>>Prayer</option>
                                 <option value="Song" <%= element.elementType === 'Song' ? 'selected' : '' %>>Song</option>
                                 <option value="Confession" <%= element.elementType === 'Confession' ? 'selected' : '' %>>Confession</option>
                                 <option value="Other" <%= element.elementType === 'Other' ? 'selected' : '' %>>Other</option>
                             </select>
-                            <select class="subtype">
+                            <select class="subtype" name="subtype">
                                 <% if (element.elementType === 'Scripture') { %>
                                     <option value="Memory Verse" <%= element.elementSubtype === 'Memory Verse' ? 'selected' : '' %>>Memory Verse</option>
                                     <option value="Call to Worship" <%= element.elementSubtype === 'Call to Worship' ? 'selected' : '' %>>Call to Worship</option>
@@ -57,7 +57,7 @@
                                     <option value="Westminster Larger Catechism" <%= element.elementSubtype === 'Westminster Larger Catechism' ? 'selected' : '' %>>Westminster Larger Catechism</option>
                                 <% } %>
                             </select>
-                            <input class= "ref" type="text" value="<%= element.elementRef %>" placeholder="<%= element.elementRef %>">
+                            <input class= "ref" type="text" value="<%= element.elementRef %>" placeholder="<%= element.elementRef %>" name="ref">
                             <div class="container">
                                 <i class="fa-solid fa-up-long up"></i>
                                 <i class="fa-solid fa-down-long down"></i>

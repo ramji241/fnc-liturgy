@@ -44,43 +44,46 @@ let data = {
     ]
 }
 
-window.onload = function() {
-    // const selectSubtype = document.querySelectorAll('.subtype')
-    // const selectRefs = document.querySelectorAll('.ref')
-    const selectOrder = document.querySelectorAll('li')
+document.querySelector('.draft').addEventListener('click', createDraft)
 
+document.querySelector('.submit').addEventListener('click', postLiturgy)
+
+window.onload = function() {
+    const selectOrder = document.querySelectorAll('li')
     selectOrder.forEach((el) => el.dataset.sort = el.dataset.order)
 
-    // const selectType = document.querySelectorAll('.type')
-    // // selectType.forEach((el) => el.addEventListener('change', getSubtypes))
-    // selectType.forEach((el) => el.addEventListener('change', event => {
-
-    // function getSubtypes(event) {
-        // const sel = event.target.closest('.subtype')
-        // console.log(sel)
-        
-        // const typeVal = event.target.value
-        // popSubtypes(sel,typeVal)
-    // }    
-
-    // function popSubtypes(sel,typeVal) {
-        // console.log(sel)
-        
-    //     data.types.forEach((detail, index) => {
-    //         // if (detail.type === typeVal) {
-    //             console.log(event.target.value)
-    //             console.log(event.target)
-    //         if (detail.type === event.target.value) {
-    //             event.target.nextElementSibling.innerHTML = ''
-    //             event.target.nextElementSibling.append(createOption('Select header',''))
-    //             data.types[index].subtypes.forEach((subtype) => {
-    //                 event.target.nextElementSibling.append(createOption(subtype, subtype))
-    //             })
-    //         }
-    //     })
-    // }))    
-
     refreshSmurfs()
+}
+
+async function postLiturgy() {
+    const worshipDate = document.querySelector('date')
+    const selectType = Array.from(document.querySelectorAll('li'))
+    
+    const liturgyElements = selectType.map((el) => {
+        const entries = new Map()
+        for (const child of el.children) {
+            if (child.className !== 'container') {
+                entries.set(`${child.className}`,`${child.value}`)
+            }
+        }
+        return entries
+    })
+
+    try{
+        const res = await fetch('builder/postLiturgy', {
+            method: 'post',
+            headers: {'Content-type': 'application/json'},
+            body: JSON.stringify({
+                'dateFromJSFile': worshipDate,
+                'orderFromJSFile': liturgyElements
+            })
+        })
+        const data = await response.json()
+        console.log(data)
+        location.reload()
+    }catch(err){
+        console.log(err)
+    }
 }
 
 function refreshSmurfs() {
@@ -121,8 +124,6 @@ function createOption(displayMember, valueMember) {
     newOption.text = displayMember
     return newOption
 }    
-
-document.querySelector('.draft').addEventListener('click', createDraft)
 
 function createDraft() {
     
@@ -235,12 +236,9 @@ function reorderLiturgy(event) {
 
         for (const node of selectOrder) {
             if (Number(node.dataset.sort) > Number(target.dataset.sort)) {
-                console.log(`${node.dataset.sort} is greater than ${target.dataset.sort}`)
                 let liValue = Number(node.dataset.sort)
                 liValue++
                 node.dataset.sort = liValue.toString()
-            } else {
-                console.log(`${node.dataset.sort} is less than ${target.dataset.sort}`)
             }
         }
         
@@ -280,12 +278,9 @@ function reorderLiturgy(event) {
 
         for (const node of selectOrder) {
             if (Number(node.dataset.sort) > Number(target.dataset.sort)) {
-                console.log(`${node.dataset.sort} is greater than ${target.dataset.sort}`)
                 let liValue = Number(node.dataset.sort)
                 liValue--
                 node.dataset.sort = liValue.toString()
-            } else {
-                console.log(`${node.dataset.sort} is less than ${target.dataset.sort}`)
             }
         }
         

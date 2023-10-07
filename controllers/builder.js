@@ -23,15 +23,18 @@ module.exports = {
             console.log(err)
         }
     },
-    // createTodo: async (req, res)=>{
-    //     try{
-    //         await Todo.create({todo: req.body.todoItem, completed: false, userId: req.user.id})
-    //         console.log('Todo has been added!')
-    //         res.redirect('/todos')
-    //     }catch(err){
-    //         console.log(err)
-    //     }
-    // },
+    postLiturgy: async (req, res)=>{
+        console.log(req.body.orderFromJSFile)
+        try{
+            await Liturgy.create({
+                date: req.body.date,
+                schedule: undefined,
+                order: req.body.orderFromJSFile
+            })
+        }catch(err){
+            console.log(err)
+        }
+    },
     // markComplete: async (req, res)=>{
     //     try{
     //         await Todo.findOneAndUpdate({_id:req.body.todoIdFromJSFile},{

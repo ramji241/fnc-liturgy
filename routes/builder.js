@@ -8,7 +8,7 @@ const builder = require('../controllers/builder')
 
 router.get('/', builderController.getLiturgy)
 
-// router.post('/buildLiturgy', builderController.defaultLiturgy)
+// router.post('/builder', builderController.postLiturgy)
 
 // router.put('/markComplete', todosController.markComplete)
 
