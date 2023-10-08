@@ -4,7 +4,7 @@ module.exports = {
     getLiturgy: async (req,res)=>{
         try{
             orderOfWorship = await Liturgy.findOne({date: new Date(req.query.date)},{order: true}).sort({elementOrder: 1})
-            res.render('builder.ejs', {date: new Date(req.query.date), order: orderOfWorship.order})
+            res.render('builder.ejs', {date: req.query.date, order: orderOfWorship.order})
         }catch(err){
             orderOfWorship = await Liturgy.findOne({isDefault: true},{order: true}).sort({elementOrder: 1})
             res.render('builder.ejs', {date: req.query.date, order: orderOfWorship.order})
