@@ -2,25 +2,12 @@ const Liturgy = require('../models/Liturgy')
 
 module.exports = {
     getLiturgy: async (req,res)=>{
-        let orderOfWorship = [
-            {_id: 'default-00', elementType: 'Scripture', elementSubtype: 'Memory Verse', elementRef: undefined, elementOrder: 0}, 
-            {_id: 'default-01', elementType: 'Scripture', elementSubtype: 'Call to Worship', elementRef: undefined, elementOrder: 1}, 
-            {_id: 'default-02', elementType: 'Song', elementSubtype: 'Songs of Adoration', elementRef: undefined, elementOrder: 2}, 
-            {_id: 'default-03', elementType: 'Scripture', elementSubtype: 'Conviction of Sin', elementRef: undefined, elementOrder: 3}, 
-            {_id: 'default-04', elementType: 'Scripture', elementSubtype: 'Assurance of Pardon', elementRef: undefined, elementOrder: 4}, 
-            {_id: 'default-05', elementType: 'Song', elementSubtype: 'Songs of Praise', elementRef: undefined, elementOrder: 5}, 
-            {_id: 'default-06', elementType: 'Scripture', elementSubtype: 'Invitation to Pray', elementRef: undefined, elementOrder: 6}, 
-            {_id: 'default-07', elementType: 'Scripture', elementSubtype: 'Reading of the Word', elementRef: undefined, elementOrder: 7}, 
-            {_id: 'default-08', elementType: 'Song', elementSubtype: 'Songs of Thanksgiving', elementRef: undefined, elementOrder: 8}
-        ]
-        // let orderOfWorship = []
         try{
-            if (req.body.date) {
-                orderOfWorship = await Liturgy.find(lookupDate).sort({elementOrder: 1})   
-            }
-            res.render('builder.ejs', {order: orderOfWorship})
+            orderOfWorship = await Liturgy.findOne({date: new Date(req.query.date)},{order: true}).sort({elementOrder: 1})
+            res.render('builder.ejs', {date: new Date(req.query.date), order: orderOfWorship.order})
         }catch(err){
-            console.log(err)
+            orderOfWorship = await Liturgy.findOne({isDefault: true},{order: true}).sort({elementOrder: 1})
+            res.render('builder.ejs', {date: req.query.date, order: orderOfWorship.order})
         }
     },
     postLiturgy: async (req, res)=>{

@@ -8,6 +8,11 @@
 <body>
     <!-- Top pane spans width of the screen; left and right panels below -->
     <h1>Welcome to FNC's Liturgy Builder!</h1>
+    <form action="/getLiturgy" method="GET">
+        <label for="worshipDate">Choose worship date: </label>
+        <input type="date" id="worshipDate" name="date" value="" required>
+        <input type="submit">
+    </form>
     <!-- Left panel will have a Login area, then an Authenticator area, and finally an option to create an account -->
     <!-- Right panel will have an image carousel -->
 </body>

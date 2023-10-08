@@ -22,13 +22,13 @@ const ElementSchema = new mongoose.Schema(
   }
 )
 
-const OrderSchema = new mongoose.Schema(
-  {
-    elements: {
-      type: [ElementSchema]
-    }
-  }
-)
+// const OrderSchema = new mongoose.Schema(
+//   {
+//     elements: {
+//       type: [ElementSchema]
+//     }
+//   }
+// )
 
 const ScheduleSchema = new mongoose.Schema(
   {
@@ -65,6 +65,10 @@ const ScheduleSchema = new mongoose.Schema(
 
 const LiturgySchema = new mongoose.Schema(
   {
+    isDefault: {
+      type: Boolean,
+      default: false
+    },
     date: {
       type: Date,
       required: true
