@@ -10,7 +10,7 @@ router.get('/getLiturgy', builderController.getLiturgy)
 
 router.post('/postLiturgy', builderController.postLiturgy)
 
-// router.put('/markComplete', todosController.markComplete)
+router.put('/putLiturgy', builderController.putLiturgy)
 
 // router.put('/markIncomplete', todosController.markIncomplete)
 

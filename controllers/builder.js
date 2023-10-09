@@ -4,14 +4,13 @@ module.exports = {
     getLiturgy: async (req,res)=>{
         try{
             orderOfWorship = await Liturgy.findOne({date: new Date(req.query.date)},{order: true}).sort({elementOrder: 1})
-            res.render('builder.ejs', {date: req.query.date, order: orderOfWorship.order})
+            res.render('builder.ejs', {default: orderOfWorship.isDefault, id: orderOfWorship._id, date: req.query.date, order: orderOfWorship.order}) // dateFormat(orderOfWorship.date, 'yyyy-mm-dd') blanks out the order of worship?
         }catch(err){
             orderOfWorship = await Liturgy.findOne({isDefault: true},{order: true}).sort({elementOrder: 1})
-            res.render('builder.ejs', {date: req.query.date, order: orderOfWorship.order})
+            res.render('builder.ejs', {default: orderOfWorship.isDefault, id: undefined, date: req.query.date, order: orderOfWorship.order})
         }
     },
     postLiturgy: async (req, res)=>{
-        console.log(req.body.orderFromJSFile)
         try{
             await Liturgy.create({
                 date: req.body.dateFromJSFile,
@@ -19,6 +18,25 @@ module.exports = {
                 order: req.body.orderFromJSFile
             })
             res.json('Posted Liturgy!')
+        }catch(err){
+            console.log(err)
+        }
+    },
+    putLiturgy: async (req, res)=>{
+        try{
+            let updateDefault = ''
+            if (req.body.defOrderFromJSFile) {
+                await Liturgy.findOneAndUpdate(
+                    {isDefault: true},
+                    {order: req.body.defOrderFromJSFile}
+                )
+                updateDefault = ' and the Default Liturgy'
+            }
+            await Liturgy.findOneAndUpdate(
+                {_id: req.body.idFromJSFile},
+                {order: req.body.orderFromJSFile}
+            )
+            res.json(`Updated Liturgy${updateDefault}!`)
         }catch(err){
             console.log(err)
         }

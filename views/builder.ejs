@@ -15,13 +15,14 @@
     <header>
         <form id="builder" action="" method="">
             <div class="date-container">
-                <label for="date">Date of Worship Event:</label>
+                <label for="date">Date:</label>
                 <input type="date" name="date" id="dateOfWorship" value="<%= date %>">
+                <div><label for="updateDefault">Update default: </label><input type="checkbox" name="updateDefault" id="updateDefault"></div>
                 <button class="get" type="submit" name="get" formaction="/getLiturgy" formmethod="get">Get</button>
                 <button class="draft" type="button" name="draft" formaction="">Draft</button>
                 <button class="submit" type="button" name="submit">Submit</button>
             </div>
-            <ol class="liturgy">
+            <ol class="liturgy" id="<%= id %>">
                 <% order.forEach(element => { %>
                     <li class="elementOrder" data-id="<%= element._id%>" data-sort="" data-order="<%= element.elementOrder %>">
                         <select class="elementType" name="type">

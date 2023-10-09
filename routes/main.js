@@ -7,6 +7,8 @@ const builderController = require('../controllers/builder')
 
 router.get('/', homeController.getIndex)
 router.get('/getLiturgy', builderController.getLiturgy)
+router.post('/postLiturgy', builderController.postLiturgy)
+router.put('/putLiturgy', builderController.putLiturgy)
 
 // router.get('/login', authController.getLogin)
 // router.post('/login', authController.postLogin)

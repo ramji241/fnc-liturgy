@@ -52,12 +52,20 @@ window.onload = function() {
     const selectOrder = document.querySelectorAll('li')
     selectOrder.forEach((el) => el.dataset.sort = el.dataset.order)
 
+    if (document.querySelector('.liturgy').id) {
+        document.querySelector('.submit').removeEventListener('click',postLiturgy)
+        document.querySelector('.submit').className = 'update'
+        
+        document.querySelector('.update').name = 'update'
+        document.querySelector('.update').innerText = 'Update'
+        document.querySelector('.update').addEventListener('click', putLiturgy)
+    }
+
     refreshSmurfs()
 }
 
 async function postLiturgy() {
     const worshipDate = document.querySelector('#dateOfWorship').value
-    console.log(worshipDate)
     const selectType = Array.from(document.querySelectorAll('li'))
     
     const liturgyElements = selectType.map((el) => {
@@ -78,6 +86,64 @@ async function postLiturgy() {
             body: JSON.stringify({
                 'dateFromJSFile': worshipDate,
                 'orderFromJSFile': liturgyElements
+            })
+        })
+        const data = await res.json()
+        console.log(data)
+    }catch(err){
+        console.log(err)
+    }
+}
+
+async function putLiturgy() {
+    const orderId = document.querySelector('.liturgy').getAttribute('id')
+    console.log(orderId)
+    const updateDefault = document.querySelector('#updateDefault')
+    console.log(updateDefault.value === 'on')
+    const selectType = Array.from(document.querySelectorAll('li'))
+
+    defaultElements = null
+
+    if (updateDefault.value === 'on') {
+        defaultElements = selectType.map((el) => {
+            const entries = new Map()
+            for (const child of el.children) {
+                if (child.className !== 'container') {
+                    if (child.className === 'elementRef') {
+                        entries.set(`${child.className}`,null)
+                    } else {
+                        entries.set(`${child.className}`,`${child.value}`)
+                    }
+                }
+            }
+            entries.set(`${el.className}`,`${el.dataset.sort}`)
+            return Object.fromEntries(entries)
+        })
+    } else {
+        defaultElements = undefined
+    }
+
+    console.log(defaultElements)
+    
+    const liturgyElements = selectType.map((el) => {
+        const entries = new Map()
+        for (const child of el.children) {
+            if (child.className !== 'container') {
+                entries.set(`${child.className}`,`${child.value}`)
+            }
+        }
+        entries.set(`${el.className}`,`${el.dataset.sort}`)
+        return Object.fromEntries(entries)
+    })
+
+    try{
+        const res = await fetch('builder/putLiturgy', {
+            method: 'put',
+            headers: {'Content-type': 'application/json'},
+            body: JSON.stringify({
+                'idFromJSFile': orderId,
+                'orderFromJSFile': liturgyElements,
+                'defOrderFromJSFile': defaultElements
             })
         })
         const data = await res.json()
