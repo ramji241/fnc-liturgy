@@ -71,8 +71,13 @@ async function postLiturgy() {
     const liturgyElements = selectType.map((el) => {
         const entries = new Map()
         for (const child of el.children) {
-            if (child.className !== 'container') {
-                entries.set(`${child.className}`,`${child.value}`)
+            for (const child of el.children) {
+                if (child.className !== 'container') {
+                    if (!child.value) {
+                        child.value = child.previousElementSibling.value
+                    }
+                    entries.set(`${child.className}`,`${child.value}`)
+                }
             }
         }
         entries.set(`${el.className}`,`${el.dataset.sort}`)
@@ -97,9 +102,7 @@ async function postLiturgy() {
 
 async function putLiturgy() {
     const orderId = document.querySelector('.liturgy').getAttribute('id')
-    console.log(orderId)
     const updateDefault = document.querySelector('#updateDefault')
-    console.log(updateDefault.value === 'on')
     const selectType = Array.from(document.querySelectorAll('li'))
 
     defaultElements = null
@@ -123,8 +126,6 @@ async function putLiturgy() {
         defaultElements = undefined
     }
 
-    console.log(defaultElements)
-    
     const liturgyElements = selectType.map((el) => {
         const entries = new Map()
         for (const child of el.children) {

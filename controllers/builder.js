@@ -3,7 +3,7 @@ const Liturgy = require('../models/Liturgy')
 module.exports = {
     getLiturgy: async (req,res)=>{
         try{
-            orderOfWorship = await Liturgy.findOne({date: new Date(req.query.date)},{order: true}).sort({elementOrder: 1})
+            orderOfWorship = await Liturgy.findOne({date: req.query.date},{order: true}).sort({elementOrder: 1})
             res.render('builder.ejs', {default: orderOfWorship.isDefault, id: orderOfWorship._id, date: req.query.date, order: orderOfWorship.order}) // dateFormat(orderOfWorship.date, 'yyyy-mm-dd') blanks out the order of worship?
         }catch(err){
             orderOfWorship = await Liturgy.findOne({isDefault: true},{order: true}).sort({elementOrder: 1})

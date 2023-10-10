@@ -61,3 +61,30 @@ html {
     display: none;
     visibility: hidden;
 }
+
+body {
+    display: flex;
+}
+
+main {
+    display: flex;
+}
+
+thead,
+tbody {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid;
+}
+
+tr {
+    display: flex;
+    text-wrap: nowrap;
+}
+
+tbody > tr > th,
+tbody > tr > td {
+    flex-basis: 50%;
+    text-align: left;
+    text-wrap: wrap;
+}

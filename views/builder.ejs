@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Liturgy Planner</title>
     <!-- <link rel="stylesheet" href="normalize.css"> -->
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/planner/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=PT+Serif&family=Ubuntu&display=swap" rel="stylesheet">
@@ -15,8 +15,12 @@
     <header>
         <form id="builder" action="" method="">
             <div class="date-container">
-                <label for="date">Date:</label>
-                <input type="date" name="date" id="dateOfWorship" value="<%= date %>">
+                <select class="location" name="location" id="location">
+                    <option value="Sierra Madre Middle School">Sierra Madre Middle School</option>
+                </select>
+                <input type="datetime-local" name="date" id="dateOfWorship" value="<%= date %>">
+            </div>
+            <div class="button-container">
                 <div><label for="updateDefault">Update default: </label><input type="checkbox" name="updateDefault" id="updateDefault"></div>
                 <button class="get" type="submit" name="get" formaction="/getLiturgy" formmethod="get">Get</button>
                 <button class="draft" type="button" name="draft" formaction="">Draft</button>
@@ -47,6 +51,7 @@
                                 <option value="Offering" <%= element.elementSubtype === 'Offering' ? 'selected' : '' %>>Offering</option>
                                 <option value="Benediction" <%= element.elementSubtype === 'Benediction' ? 'selected' : '' %>>Benediction</option>
                             <% } else if (element.elementType === 'Song') { %>
+                                <option value="" <%= !element.elementSubtype ? 'selected' : '' %>></option>
                                 <option value="Songs of Adoration" <%= element.elementSubtype === 'Songs of Adoration' ? 'selected' : '' %>>Songs of Adoration</option>
                                 <option value="Songs of Praise" <%= element.elementSubtype === 'Songs of Praise' ? 'selected' : '' %>>Songs of Praise</option>
                                 <option value="Songs of Thanksgiving" <%= element.elementSubtype === 'Songs of Thanksgiving' ? 'selected' : '' %>>Songs of Thanksgiving</option>
@@ -58,7 +63,7 @@
                                 <option value="Westminster Larger Catechism" <%= element.elementSubtype === 'Westminster Larger Catechism' ? 'selected' : '' %>>Westminster Larger Catechism</option>
                             <% } %>
                         </select>
-                        <input class= "elementRef" type="text" value="<%= element.elementRef %>" placeholder="<%= element.elementRef %>" name="ref">
+                        <input class= "elementRef" type="text" value="<%= element.elementRef %>" placeholder="<%= element.elementRef %>" name="ref" <%= element.elementType === 'Confession' ? 'disabled' : '' %>>
                         <div class="container">
                             <i class="fa-solid fa-up-long up"></i>
                             <i class="fa-solid fa-down-long down"></i>
