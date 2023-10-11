@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Songs Directory</title>
+    <!-- <link rel="stylesheet" href="normalize.css"> -->
+    <link rel="stylesheet" href="css/songs/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Serif&family=Ubuntu&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/0b75e0e2be.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <form action="">
+            <input type="file" name="songfile" id="songfile">
+            <button class="submit" type="button" name="submit">Submit Lyrics</button>
+        </form>
+        <form action="">
+            <select name="songSelect" id="songSelect">
+                <option>Choose song from database...</option>
+                <% songs.forEach((el) => { %>
+                    <option value="<%= el._id %>"><%= el.title %></option>
+                <% }) %>
+            </select>
+            <!-- <button class="get" type="submit" name="get">Get Song</button> -->
+        </form>
+        <script type="text/javascript" src="js/songs.js"></script>
+    </header>
+    <main>
+        <section class="songHeader">
+            <h2 class="title"></h2>
+            <p class="authors"></p>
+            <p class="ccli"><span class="cclinum"></span>, <span class="cclilic"></span></p>
+            <p class="copyright"></p>
+        </section>
+        <section class="songLyrics">
+            <p class="lyrics"></p>
+        </section>
+    </main>
+</body>
+</html>
