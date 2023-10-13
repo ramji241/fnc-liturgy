@@ -15,9 +15,9 @@ const VerseSchema = new mongoose.Schema(
 
 const SongSchema = new mongoose.Schema(
   {
-    isOriginal: {
-      type: Boolean,
-      default: false
+    parentSong: {
+      type: String,
+      required: false
     },
     title: {
       type: String,

@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 3000
 
 const mainRoutes = require('./routes/main')
 const builderRoutes = require('./routes/builder')
+const songsRoutes = require('./routes/songs')
 
 require('dotenv').config({path: './config/.env'})
 
@@ -41,6 +42,7 @@ app.use(express.json())
   
 app.use('/', mainRoutes)
 app.use('/builder', builderRoutes)
+app.use('/songs', songsRoutes)
  
 app.listen(PORT, () => {
     console.log("listening for requests");

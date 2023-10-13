@@ -69,10 +69,44 @@ body {
 
 header {
     display: flex;
+    flex-direction: column;
+    margin: 1% 1% 0 1%;
 }
 
 main {
-    margin: 5% 20%;
+    display: flex;
+    justify-content: space-between;
+    margin: 1% 1% 0 1%;
+}
+
+.songDisplay {
+    flex-basis: 45%;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor {
+    flex-basis: 50%;
+}
+
+#songSelector {
+    margin: 1% 0 0 0;
+}
+
+.primarySongDisplay,
+.altSongDisplay {
+    display: flex;
+    flex-direction: column;
+}
+
+section.showLyrics {
+    margin: 1% 0 0 0;
+}
+
+section.showLyrics,
+#editLyrics {
+    display: flex;
+    flex-direction: column;
 }
 
 h2.title {
@@ -103,4 +137,60 @@ div.firstLine {
 
 p.firstLine {
     display: inline-block;
+}
+
+#editLyrics input,
+#editLyrics p {
+    display: block;
+    margin: 0 0 1% 0;
+    width: 100%;
+}
+
+.editVerse {
+    display: flex;
+    justify-content: space-around;
+    gap: 1%;
+    margin: 0 0 2% 0;
+    border: 1px solid;
+}
+
+.editVerse_type {
+    flex-basis: 20%;
+    margin: 1% 0 0 0;
+}
+
+.editVerse_type > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.editVerse_type > div > div.container {
+    width: 60%;
+    align-self: flex-end;
+    margin: 2% 0 0 0;
+}
+
+.editVerse_lyrics {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 75%;
+    margin: 1% 0 0 0;
+}
+
+.editVerse_lyrics > div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.editVerse_lyrics > div > input {
+    flex-basis: 83%;
+}
+
+.editVerse_lyrics > div > div.container {
+    flex-basis: 15%;
+}
+
+div.container {
+    display: flex;
+    justify-content: space-between;
 }

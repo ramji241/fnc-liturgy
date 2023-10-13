@@ -13,31 +13,48 @@
 </head>
 <body>
     <header>
-        <form action="">
+        <form id="songSubmitter" action="">
             <input type="file" name="songfile" id="songfile">
-            <button class="submit" type="button" name="submit">Submit Lyrics</button>
+            <button class="submit" type="button" name="submit">Upload Lyrics</button>
         </form>
-        <form action="">
-            <select name="songSelect" id="songSelect">
-                <option>Choose song from database...</option>
-                <% songs.forEach((el) => { %>
-                    <option value="<%= el._id %>"><%= el.title %></option>
-                <% }) %>
-            </select>
-            <!-- <button class="get" type="submit" name="get">Get Song</button> -->
-        </form>
-        <script type="text/javascript" src="js/songs.js"></script>
     </header>
     <main>
-        <section class="songHeader">
-            <h2 class="title"></h2>
-            <p class="authors"></p>
-            <p class="ccli"><span class="cclinum"></span>, <span class="cclilic"></span></p>
-            <p class="copyright"></p>
+        <section class="songDisplay">
+            <section class="primarySongDisplay">
+                <select name="songSelect" id="songSelect">
+                    <option value="">Choose song from database...</option>
+                </select>
+                <section class="showLyrics">
+                    <section class="songHeader"></section>
+                    <section class="songLyrics"></section>
+                </section>
+            </section>
+            <section class="altSongDisplay">
+                <select name="altSelect" id="altSelect">
+                    <option value="">Choose alternate version...</option>
+                </select>
+                <section class="showLyrics">
+                    <section class="songHeader"></section>
+                    <section class="songLyrics"></section>
+                </section>
+            </section>
+            <button class="editSongLyrics" type="button" name="editSongLyrics" form="editLyrics">Edit Lyrics</button>
         </section>
-        <section class="songLyrics">
-            <p class="lyrics"></p>
+        <section class="editor hidden">
+            <form action="" id="editLyrics">
+                <section class="songHeader">
+                    <label for="editTitle">Title: </label><input class="editTitle" type="text" id="editTitle">
+                    <label for="editAuthors">Authors: </label><input class="editAuthors" type="text" id="editAuthors">
+                    <p class="copyCcli"><span class="copyCclinum"></span>, <span class="copyCclilic"></span></p>
+                    <label for="editCopyright">Copyright: </label><input class="editCopyright" type="text" id="editCopyright">
+                </section>
+                <section class="editVerses"></section>
+            </form>
+            <button class="discardChanges" type="reset" form="editLyrics" name="discardChanges">Discard Changes</button>
+            <button class="createVersion" type="button" form="editLyrics" name="createVersion">Create Version</button>
+            <button class="updateVersion hidden" type="button" form="editLyrics" name="updateVersion">Update Version</button>
         </section>
     </main>
+    <script type="text/javascript" src="js/songs.js"></script>
 </body>
 </html>
