@@ -1,3 +1,4 @@
+const { ReturnDocument } = require('mongodb')
 const Songs = require('../models/Songs')
 
 module.exports = {
@@ -39,16 +40,18 @@ module.exports = {
     },
     updateVersion: async (req, res)=>{
         try{
-            await Songs.findOneAndUpdate(
+            update = await Songs.findOneAndUpdate(
                 {_id: req.body.idFromJSFile},
                 {
                     title: req.body.titleFromJSFile,
                     authors: req.body.authorsFromJSFile,
                     copyright: req.body.copyrightFromJSFile,
                     verses: req.body.versesFromJSFile
-                }
+                },
+                {returnDocument: 'after'}
             )
-            res.json(`Updated Song!`)
+            alternates = await Songs.find({parentSong: update.parentSong})
+            res.send({update, alternates})
         }catch(err){
             console.log(err)
         }

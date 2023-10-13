@@ -13,46 +13,46 @@
 </head>
 <body>
     <header>
-        <form id="songSubmitter" action="">
-            <input type="file" name="songfile" id="songfile">
-            <button class="submit" type="button" name="submit">Upload Lyrics</button>
+        <form action="">
+            <input type="file" id="inputFileUpload">
+            <button type="button" id="btnFileUpload">Upload Lyrics</button>
         </form>
     </header>
     <main>
-        <section class="songDisplay">
-            <section class="primarySongDisplay">
-                <select name="songSelect" id="songSelect">
+        <section id="display">
+            <section id="primary">
+                <select class="selectSong" id="selectPrimary">
                     <option value="">Choose song from database...</option>
                 </select>
-                <section class="showLyrics">
+                <section class="songDisplay" name="songPrimary">
                     <section class="songHeader"></section>
                     <section class="songLyrics"></section>
                 </section>
             </section>
-            <section class="altSongDisplay">
-                <select name="altSelect" id="altSelect">
+            <section id="alternate">
+                <select class="selectSong" id="selectAlternate">
                     <option value="">Choose alternate version...</option>
                 </select>
-                <section class="showLyrics">
+                <section class="songDisplay" id="songAlternate">
                     <section class="songHeader"></section>
                     <section class="songLyrics"></section>
                 </section>
             </section>
-            <button class="editSongLyrics" type="button" name="editSongLyrics" form="editLyrics">Edit Lyrics</button>
+            <button type="button" id="btnEditSong">Edit Lyrics</button>
         </section>
-        <section class="editor hidden">
-            <form action="" id="editLyrics">
-                <section class="songHeader">
-                    <label for="editTitle">Title: </label><input class="editTitle" type="text" id="editTitle">
-                    <label for="editAuthors">Authors: </label><input class="editAuthors" type="text" id="editAuthors">
-                    <p class="copyCcli"><span class="copyCclinum"></span>, <span class="copyCclilic"></span></p>
-                    <label for="editCopyright">Copyright: </label><input class="editCopyright" type="text" id="editCopyright">
+        <section class="hidden" id="editor">
+            <form action="" id="editSong">
+                <section id="editHeader">
+                    <div id="divTitle"><label for="editTitle">Title: </label><input type="text" id="editTitle"></div>
+                    <div id="divAuthors"><label for="editAuthors">Authors: </label><input type="text" id="editAuthors"></div>
+                    <p id="copyCCLI"><span id="copyCCLINum"></span>, <span id="copyCCLILic"></span></p>
+                    <div id="divCopyright"><label for="editCopyright">Copyright: </label><input type="text" id="editCopyright"></div>
                 </section>
-                <section class="editVerses"></section>
+                <section id="editLyrics"></section>
             </form>
-            <button class="discardChanges" type="reset" form="editLyrics" name="discardChanges">Discard Changes</button>
-            <button class="createVersion" type="button" form="editLyrics" name="createVersion">Create Version</button>
-            <button class="updateVersion hidden" type="button" form="editLyrics" name="updateVersion">Update Version</button>
+            <button type="reset" form="editSong" id="btnDiscard">Discard Changes</button>
+            <button type="button" form="editSong" id="btnCreate">Create Version</button>
+            <button class="hidden" type="button" form="editSong" id="btnUpdate">Update Version</button>
         </section>
     </main>
     <script type="text/javascript" src="js/songs.js"></script>

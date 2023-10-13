@@ -76,57 +76,52 @@ header {
 main {
     display: flex;
     justify-content: space-between;
-    margin: 1% 1% 0 1%;
+    margin: 1%;
+    gap: 1%
 }
 
-.songDisplay {
+#display {
     flex-basis: 45%;
     display: flex;
     flex-direction: column;
 }
 
-.editor {
-    flex-basis: 50%;
+#editor {
+    flex-basis: 55%;
 }
 
-#songSelector {
-    margin: 1% 0 0 0;
+.selectSong {
+    margin: 1% 0;
+    width: 100%;
 }
 
-.primarySongDisplay,
-.altSongDisplay {
+.songDisplay {
     display: flex;
     flex-direction: column;
+    margin: 1% 0;
 }
 
-section.showLyrics {
-    margin: 1% 0 0 0;
+.songHeader,
+.songLyrics {
+    margin: 1% 0;
 }
 
-section.showLyrics,
-#editLyrics {
-    display: flex;
-    flex-direction: column;
+.songLyrics > section {
+    margin: 1% 0 3% 0;
 }
 
-h2.title {
+.title {
     font-weight: bold;
 }
 
-p.authors,
-p.ccli,
-p.copyright {
+.authors,
+.ccli,
+.copyright {
     font-size: 0.75rem;
     font-style: italic;
 }
 
-section.songHeader,
-section.verse,
-section.chorus {
-    margin: 0 0 2% 0;
-}
-
-section.chorus {
+.chorus {
     font-style: italic;
 }
 
@@ -139,58 +134,63 @@ p.firstLine {
     display: inline-block;
 }
 
-#editLyrics input,
-#editLyrics p {
-    display: block;
-    margin: 0 0 1% 0;
-    width: 100%;
-}
-
-.editVerse {
-    display: flex;
-    justify-content: space-around;
-    gap: 1%;
-    margin: 0 0 2% 0;
-    border: 1px solid;
-}
-
-.editVerse_type {
-    flex-basis: 20%;
-    margin: 1% 0 0 0;
-}
-
-.editVerse_type > div {
-    display: flex;
-    flex-direction: column;
-}
-
-.editVerse_type > div > div.container {
-    width: 60%;
+button {
+    width: fit-content;
     align-self: flex-end;
-    margin: 2% 0 0 0;
 }
 
-.editVerse_lyrics {
-    display: flex;
-    flex-direction: column;
-    flex-basis: 75%;
-    margin: 1% 0 0 0;
+#editHeader > div,
+#copyCCLI {
+    margin: 1% 0;
 }
 
-.editVerse_lyrics > div {
+#editHeader > div {
     display: flex;
+}
+
+#editHeader > div > input {
+    width: 100%;
+    margin: 0 0 0 1%;
+}
+
+.divVerse {
+    margin: 3% 0;
+    border: 1px solid;
+    display: flex;
+    gap: 1%;
     justify-content: space-between;
 }
 
-.editVerse_lyrics > div > input {
-    flex-basis: 83%;
+.sectionType {
+    width: 20%;
+    margin: 1%;
 }
 
-.editVerse_lyrics > div > div.container {
-    flex-basis: 15%;
+.sectionLyrics {
+    width: 70%;
+    margin: 1%
 }
 
-div.container {
+.faVerse {
+    width: 10%;
+    margin: 1%;
+}
+
+.inputType {
+    width: 100%;
+    margin: 1%;
+}
+
+.divLyric {
     display: flex;
+    gap: 1%;
     justify-content: space-between;
+}
+
+.inputLyric {
+    width: 83%;
+}
+
+.faLyric {
+    width: 17%;
 }

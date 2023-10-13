@@ -1,26 +1,6 @@
-const getSongList = async() => {
-    for (let i = 1; i < document.querySelector('#songSelect').children.length; i++) {
-        document.querySelector('#songSelect').removeChild(document.querySelector('#songSelect').children[i])
-    }
-    
-    try {
-        const res = await fetch('/songs/getSongs')
-        const data = await res.json()
-        
-        for (each of data) {
-            const eachSong = document.createElement('option')
-            document.querySelector('#songSelect').appendChild(eachSong)
-            eachSong.innerHTML = each.title
-            eachSong.value = each._id
-        }
+// Reads contents of uploaded file; returns contents as text
 
-        document.querySelector('#songSelect').children.selectedIndex = 0
-    } catch (e) {
-        console.log(e)
-    }
-}
-
-const readUploadedFileAsText = (inputFile) => {
+const readUploadedFileAsText = (file) => {
     const temporaryFileReader = new FileReader()
 
     return new Promise((resolve, reject) => {
@@ -33,51 +13,49 @@ const readUploadedFileAsText = (inputFile) => {
             resolve(temporaryFileReader.result)
         }
 
-        temporaryFileReader.readAsText(inputFile)
+        temporaryFileReader.readAsText(file)
     })
 }
 
+// Parses text file into object
+
 const handleUpload = async(event) => {
-    const file = event.target.previousElementSibling.files[0]
+    const file = document.getElementById('inputFileUpload').files[0]
 
     try {
         const fileContents = await readUploadedFileAsText(file)
         
         const fileArray = fileContents.split('\n')
-        const lyrics = {}
+        const songObj = {}
         
         const titleBreak = fileArray.findIndex(el => el === '')
         const creditsBreak = fileArray.findLastIndex(el => el === '')
         
-        lyrics.title = fileArray[titleBreak - 1]
-        lyrics.authors = fileArray[creditsBreak + 1]
-        lyrics.cclinum = fileArray.find(el => el.includes('CCLI Song'))
-        lyrics.cclilic = fileArray.find(el => el.includes('CCLI License'))
-        lyrics.copyright = fileArray.find(el => el.includes('Words') || el.includes('Music'))
-        lyrics.verses = []
+        songObj.title = fileArray[titleBreak - 1]
+        songObj.authors = fileArray[creditsBreak + 1]
+        songObj.cclinum = fileArray.find(el => el.includes('CCLI Song'))
+        songObj.cclilic = fileArray.find(el => el.includes('CCLI License'))
+        songObj.copyright = fileArray.find(el => el.includes('Words') || el.includes('Music'))
+        songObj.verses = []
 
         let lyricsArray = fileArray.slice(titleBreak + 1, creditsBreak)
 
         do {
-            lyrics.verses.push(getVerses(0, lyricsArray))
+            songObj.verses.push(getVerses(0, lyricsArray))
         } while (lyricsArray.findIndex(el => el === '') !== -1)
 
         function getVerses(start, arr) {
             const verseBreak = arr.findIndex(el => el === '')
-            const verseText = arr.slice(start,verseBreak)
+            const lyrics = arr.slice(start,verseBreak)
             
-            for (let i = 0; i <= verseBreak; i++) {
-                arr.shift()
-            }
+            for (let i = 0; i <= verseBreak; i++) arr.shift()
 
-            verseText.forEach(el => {
-                el.replaceAll(/.,:;/g,'')
-            });
+            lyrics.forEach(line => line.replaceAll(/.,:;/g,''));
             
-            return {type: verseText[0], lyrics: verseText.slice(1)}
+            return {type: lyrics[0], lyrics: lyrics.slice(1)}
         }
 
-        return lyrics
+        return songObj
     } catch (e) {
         console.log(e)
     }
@@ -91,6 +69,8 @@ const postLyrics = async(event) => {
         console.log(e)
     }
 }
+
+// Creates new document from object
 
 const createDoc = async(file) => {
     try {
@@ -114,171 +94,188 @@ const createDoc = async(file) => {
     }
 }
 
+const listSongs = async() => {
+    const selectPrimary = document.getElementById('selectPrimary')
+    
+    for (let i = 1; i < selectPrimary.children.length; i++) {
+        selectPrimary.removeChild(selectPrimary.children[i])
+    }
+    
+    try {
+        const res = await fetch('/songs/getSongs')
+        const data = await res.json()
+        
+        for (song of data) {
+            const optionSong = document.createElement('option')
+            document.getElementById('selectPrimary').appendChild(optionSong)
+            optionSong.innerHTML = song.title
+            optionSong.value = song._id
+        }
+
+        document.getElementById('selectPrimary').children.selectedIndex = 0
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 const getSelected = async(event) => {
     const selectedSection = event.target.parentElement
     const songId = event.target.value
-
+    
     try {
         const res = await fetch('/songs/getSelected?' + new URLSearchParams({'id': songId}))
         const data = await res.json()
         
-        getSelectedSong(data.selected, selectedSection)
+        showSong(data.selected, selectedSection)
         if (data.alternates.length > 0) {
-            getAlternates(data.alternates)
+            listAlternates(data.alternates)
         }
     } catch (e) {
         emptySongContainer(selectedSection)
     }
 }
 
-const getSelectedSong = (data, section) => {
-    const lyricsSection = section.querySelector('.showLyrics')
-    const songHeader = lyricsSection.querySelector('.songHeader')
-    const songLyrics = lyricsSection.querySelector('.songLyrics')
+const showSong = (data, section) => {
+    const sectionSong = section.querySelector('.songDisplay')
     
+    const songHeader = sectionSong.querySelector('.songHeader')
     songHeader.replaceChildren()
+    
+    const songLyrics = sectionSong.querySelector('.songLyrics')
     songLyrics.replaceChildren()
 
-    const newTitle = document.createElement('h2')
-    songHeader.appendChild(newTitle)
-    newTitle.className = 'title'
-    newTitle.innerHTML = data.title
+    const songTitle = document.createElement('h2')
+    songTitle.className = 'title'
+    songTitle.innerHTML = data.title
+    songHeader.appendChild(songTitle)
     
-    const newAuthors = document.createElement('p')
-    songHeader.appendChild(newAuthors)
-    newAuthors.className = 'authors'
-    newAuthors.innerHTML = data.authors
+    const songAuthors = document.createElement('p')
+    songAuthors.className = 'authors'
+    songAuthors.innerHTML = data.authors
+    songHeader.appendChild(songAuthors)
     
-    const newCcli = document.createElement('p')
-    const newCcliNum = document.createElement('span')
-    const newCcliLic = document.createElement('span')
-    songHeader.appendChild(newCcli)
-    newCcli.appendChild(newCcliNum)
-    newCcli.appendChild(newCcliLic)
-    newCcli.className = 'ccli'
-    newCcliNum.className = 'cclinum'
-    newCcliLic.className = 'cclilic'
-    newCcliNum.innerHTML = data.cclinum
-    newCcliLic.innerHTML = data.cclilic
+    const songCCLI = document.createElement('p')
+    songCCLI.className = 'ccli'
+    songHeader.appendChild(songCCLI)
     
-    const newCopyright = document.createElement('p')
-    songHeader.appendChild(newCopyright)
-    newCopyright.className = 'copyright'
-    newCopyright.innerHTML = data.copyright
+    const songCCLINum = document.createElement('span')
+    songCCLINum.className = 'cclinum'
+    songCCLINum.innerHTML = data.cclinum
+    songCCLI.appendChild(songCCLINum)
+    songCCLI.innerHTML += ', '
     
-    data.verses.forEach(el => {
-        const newVerse = document.createElement('section')
-        if (el.type.includes('Chorus')) {
-            newVerse.className = el.type.toLowerCase()
-        } else {
-            newVerse.className = 'verse'
-        }
-        songLyrics.appendChild(newVerse)
+    const songCCLILic = document.createElement('span')
+    songCCLILic.className = 'cclilic'
+    songCCLILic.innerHTML = data.cclilic
+    songCCLI.appendChild(songCCLILic)
+    
+    const songCopyright = document.createElement('p')
+    songCopyright.className = 'copyright'
+    songCopyright.innerHTML = data.copyright
+    songHeader.appendChild(songCopyright)
+    
+    data.verses.forEach(verse => {
+        const sectionVerse = document.createElement('section')
+        sectionVerse.className = verse.type.includes('Chorus') ? verse.type.toLowerCase() : 'verse'
+        songLyrics.appendChild(sectionVerse)
 
-        el.lyrics.forEach((lyric,i) => {
-            const newDiv = document.createElement('div')
-            const newLine = document.createElement('p')
-
-            if (i===0 ) {
-                newDiv.className = 'firstLine'
-                newLine.className = 'firstLine'
-            } else {
-                newLine.className = 'line'
-            }
+        verse.lyrics.forEach((lyric,i) => {
+            const divLyric = document.createElement('div')
+            divLyric.className = i === 0 ? 'firstLine' : 'line'
             
-            newVerse.appendChild(newDiv).appendChild(newLine)
-            newLine.innerHTML = lyric
-
-            if (i===0 && !el.type.includes('Verse')) {
-                newLine.insertAdjacentHTML('afterend',`<span class='${el.type.toLowerCase()}'>${el.type}</span>`)
-            }
-
+            const pLyric = document.createElement('p')
+            pLyric.className = i === 0 ? 'firstLine' : 'line'
+            pLyric.innerHTML = lyric
+            sectionVerse.appendChild(divLyric).appendChild(pLyric)
+            if (i===0 && !verse.type.includes('Verse')) pLyric.insertAdjacentHTML('afterend',`<span class='${verse.type.toLowerCase()}'>${verse.type}</span>`)
         })
     })
 }
 
-const getAlternates = (data) => {
-    const altOptions = document.querySelector('#altSelect').children
+const listAlternates = (data) => {
+    const defaultAltOption = document.getElementById('selectAlternate').firstElementChild
     
-    for (let i = 1; i < altOptions.length; i++) {
-        document.querySelector('#altSelect').children[i].removeChild()
-    }
+    document.getElementById('selectAlternate').replaceChildren()
+    document.getElementById('selectAlternate').appendChild(defaultAltOption)
     
-    for (each of data) {
-        const eachAlternate = document.createElement('option')
-        document.querySelector('#altSelect').appendChild(eachAlternate)
-        eachAlternate.innerHTML = each.title
-        eachAlternate.value = each._id
+    for (alternate of data) {
+        const optionAlternate = document.createElement('option')
+        optionAlternate.innerHTML = alternate.title
+        optionAlternate.value = alternate._id
+        document.getElementById('selectAlternate').appendChild(optionAlternate)
     }
 }
 
 const emptySongContainer = (section) => {
-    if (section.className === 'primarySongDisplay') {
+    if (section.id === 'primary') {
         location.reload()
     } else {
-        const altOptions = document.querySelector('#altSelect').children
-        for (child of section.children) {
-            if (child.id === 'altSelect') {
-                child.replaceChildren(...altOptions)
-                child.selectedIndex = 0
-            } else {
-                for (elements of child.children) {
-                    elements.replaceChildren()
-                }
-            }
+        const altOptions = document.getElementById('selectAlternate').children
+        document.getElementById('selectAlternate').replaceChildren(...altOptions)
+        document.getElementById('selectAlternate').selectedIndex = 0
+
+        const arraySongAlternate = document.getElementById('songAlternate').children
+        for (section of arraySongAlternate) {
+            section.replaceChildren()
         }
     }
 }
 
 const editSelectedSong = (data) => {
-    document.querySelector('.editVerses').replaceChildren()
-    document.querySelector('.editTitle').value = data.title
-    document.querySelector('.editAuthors').value = data.authors
-    document.querySelector('.copyCclinum').innerHTML = data.cclinum
-    document.querySelector('.copyCclilic').innerHTML = data.cclilic
-    document.querySelector('.editCopyright').value = data.copyright
+    document.getElementById('editTitle').value = data.title
+    document.getElementById('editAuthors').value = data.authors
+    document.getElementById('copyCCLINum').innerHTML = data.cclinum
+    document.getElementById('copyCCLILic').innerHTML = data.cclilic
+    document.getElementById('editCopyright').value = data.copyright
 
+    document.getElementById('editLyrics').replaceChildren()
+    
     data.verses.forEach(el => {
-        const faDiv_type = document.createElement('div')
-        faDiv_type.innerHTML = '<i class="fa-solid fa-up-long up"></i><i class="fa-solid fa-down-long down"></i><i class="fa-solid fa-plus add"></i><i class="fa-regular fa-trash-can del"></i>'
-        faDiv_type.className = 'container'
-    
-        const editVerse = document.createElement('section')
-        editVerse.className = 'editVerse'
-        const editVerse_type = document.createElement('section')
-        editVerse_type.className = 'editVerse_type'
-        const editVerse_lyrics = document.createElement('section')
-        editVerse_lyrics.className = 'editVerse_lyrics'
-
-        document.querySelector('.editVerses').appendChild(editVerse)
-        editVerse.appendChild(editVerse_type)
-        editVerse.appendChild(editVerse_lyrics)
-
-        const editVerse_typeDiv = document.createElement('div')
-        const inputVerse_type = document.createElement('input')
-        inputVerse_type.value = el.type
-        editVerse_typeDiv.appendChild(inputVerse_type)
-        editVerse_typeDiv.appendChild(faDiv_type)
-        editVerse_type.appendChild(editVerse_typeDiv)
+        const divVerse = document.createElement('div')
+        divVerse.className = 'divVerse'
+        document.getElementById('editLyrics').appendChild(divVerse)
         
-        el.lyrics.forEach((lyric,i) => {
-            const faDiv_lyric = document.createElement('div')
-            faDiv_lyric.innerHTML = '<i class="fa-solid fa-up-long up"></i><i class="fa-solid fa-down-long down"></i><i class="fa-solid fa-plus add"></i><i class="fa-regular fa-trash-can del"></i>'
-            faDiv_lyric.className = 'container'
-    
-            const editVerse_lyricsDiv = document.createElement('div')
-            const inputVerse_lyric = document.createElement('input')
-            editVerse_lyricsDiv.appendChild(inputVerse_lyric)
-            editVerse_lyricsDiv.appendChild(faDiv_lyric)
-            editVerse_lyrics.appendChild(editVerse_lyricsDiv)
+        const sectionType = document.createElement('section')
+        sectionType.className = 'sectionType'
+        divVerse.appendChild(sectionType)
+        
+        const inputType = document.createElement('input')
+        inputType.className = 'inputType'
+        inputType.value = el.type
+        sectionType.appendChild(inputType)
+        
+        const sectionLyrics = document.createElement('section')
+        sectionLyrics.className = 'sectionLyrics'
+        divVerse.appendChild(sectionLyrics)
+        
+        el.lyrics.forEach(lyric => {
+            const divLyric = document.createElement('div')
+            divLyric.className = 'divLyric'
+            sectionLyrics.appendChild(divLyric)
+
+            const inputLyric = document.createElement('input')
+            inputLyric.className = 'inputLyric'
+            divLyric.appendChild(inputLyric)
+            inputLyric.value = lyric
             
-            inputVerse_lyric.value = lyric
+            const faLyric = document.createElement('div')
+            faLyric.className = 'faLyric'
+            faLyric.innerHTML = '<i class="fa-solid fa-up-long up"></i><i class="fa-solid fa-down-long down"></i><i class="fa-solid fa-plus add"></i><i class="fa-regular fa-trash-can del"></i>'
+            divLyric.appendChild(faLyric)
         })
+
+        const faVerse = document.createElement('div')
+        faVerse.className = 'faVerse'
+        faVerse.innerHTML = '<i class="fa-solid fa-up-long up"></i><i class="fa-solid fa-down-long down"></i><i class="fa-solid fa-plus add"></i><i class="fa-regular fa-trash-can del"></i>'
+        divVerse.appendChild(faVerse)
     })
 }
 
-const editSongLyrics = async(event) => {
-    const whichSongId = document.querySelector('#altSelect').value !== '' ? document.querySelector('#altSelect').value : document.querySelector('#songSelect').value
+const editSong = async(event) => {
+    const idPrimary = document.getElementById('selectPrimary').value
+    const idAlternate = document.getElementById('selectAlternate').value
+    
+    const whichSongId = idAlternate !== '' ? idAlternate : idPrimary
 
     try {
         const res = await fetch('/songs/getSelected?' + new URLSearchParams({'id': whichSongId}))
@@ -288,91 +285,91 @@ const editSongLyrics = async(event) => {
         console.log(e)
     }
 
-    document.querySelector('.editor').classList.remove('hidden')
-    if (document.querySelector('#altSelect').value !== '') {
-        document.querySelector('.updateVersion').classList.remove('hidden')
+    document.getElementById('editor').classList.remove('hidden')
+    if (idAlternate !== '') {
+        document.getElementById('btnUpdate').classList.remove('hidden')
     }
 }
 
 const discardChanges = () => {
-    document.querySelector('.editor').classList.add('hidden')
+    document.getElementById('editor').classList.add('hidden')
 }
 
 const docObject = async() => {
-    const tempObj = {}
-    tempObj.verses = []
+    const songObj = {}
+    songObj.verses = []
 
-    tempObj.parentSong = document.querySelector('#songSelect').value
-    tempObj.title = document.querySelector('.editTitle').value
-    tempObj.authors = document.querySelector('.editAuthors').value
-    tempObj.cclinum = document.querySelector('.copyCclinum').innerHTML
-    tempObj.cclilic = document.querySelector('.copyCclilic').innerHTML
-    tempObj.copyright = document.querySelector('.editCopyright').value
+    songObj.parentSong = document.getElementById('selectPrimary').value
+    songObj.title = document.getElementById('editTitle').value
+    songObj.authors = document.getElementById('editAuthors').value
+    songObj.cclinum = document.getElementById('copyCCLINum').innerHTML
+    songObj.cclilic = document.getElementById('copyCCLILic').innerHTML
+    songObj.copyright = document.getElementById('editCopyright').value
 
-    const verseArr = document.querySelector('.editVerses').children
+    const arrayVerses = document.getElementById('editLyrics').children
 
-    for (child of verseArr) {
+    for (divVerse of arrayVerses) {
         const lyricObj = {}
-        const eachVerseArr = child.children
+        lyricObj.lyrics = []
+        
+        lyricObj.type = divVerse.querySelector('.inputType').value
+        
+        const sectionLyrics = divVerse.querySelector('.sectionLyrics').children
 
-        for (each of eachVerseArr) {
-            if (each.className === 'editVerse_type') {
-                lyricObj.type = each.firstElementChild.value
-            } else {
-                eachLyricArr = each.children
-                lyricObj.lyrics = []
-                for (lyric of eachLyricArr) {
-                    lyricObj.lyrics.push(lyric.value)
-                }
-            }
+        for (divLyric of sectionLyrics) {
+            lyricObj.lyrics.push(divLyric.querySelector('.inputLyric').value)
         }
-
-        tempObj.verses.push(lyricObj)
+        
+        songObj.verses.push(lyricObj)
     }
 
-    return tempObj
+    return songObj
 }
 
 const createVersion = async () => {
-    const tempObj = await docObject()
-    await createDoc(tempObj)
+    const songObj = await docObject()
+    await createDoc(songObj)
 }
 
 const updateVersion = async () => {
     try{
-        const songId = document.querySelector('#altSelect').value
-        const tempObj = await docObject()
+        const songId = document.getElementById('selectAlternate').value
+        const songObj = await docObject()
         
         const res = await fetch('/songs/updateVersion', {
             method: 'put',
             headers: {'Content-type': 'application/json'},
             body: JSON.stringify({
                 'idFromJSFile': songId,
-                'titleFromJSFile': tempObj.title,
-                'authorsFromJSFile': tempObj.authors,
-                'copyrightFromJSFile': tempObj.copyright,
-                'versesFromJSFile': tempObj.verses,
+                'titleFromJSFile': songObj.title,
+                'authorsFromJSFile': songObj.authors,
+                'copyrightFromJSFile': songObj.copyright,
+                'versesFromJSFile': songObj.verses,
             })
         })
         const data = await res.json()
-        console.log(data)
+        
+        showSong(data.update, document.getElementById('alternate'))
+        listAlternates(data.alternates)
     }catch(err){
         console.log(err)
     }
 }
 
-window.addEventListener('load', getSongList)
+// Event Listeners
+
+window.addEventListener('load', listSongs)
     
-document.querySelector('.submit').addEventListener('click', postLyrics)
+document.getElementById('btnFileUpload').addEventListener('click', postLyrics)
 
-document.querySelector('#songSelect').addEventListener('change', getSelected)
+document.getElementById('selectPrimary').addEventListener('change', getSelected)
 
-document.querySelector('#altSelect').addEventListener('change', getSelected)
+document.getElementById('selectAlternate').addEventListener('change', getSelected)
 
-document.querySelector('.editSongLyrics').addEventListener('click', editSongLyrics)
+document.getElementById('btnEditSong').addEventListener('click', editSong)
 
-document.querySelector('.discardChanges').addEventListener('click', discardChanges)
+document.getElementById('btnDiscard').addEventListener('click', discardChanges)
 
-document.querySelector('.createVersion').addEventListener('click',createVersion)
+document.getElementById('btnCreate').addEventListener('click',createVersion)
 
-document.querySelector('.updateVersion').addEventListener('click',updateVersion)
+document.getElementById('btnUpdate').addEventListener('click',updateVersion)
