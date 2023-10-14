@@ -24,13 +24,13 @@ const handleUpload = async(event) => {
 
     try {
         const fileContents = await readUploadedFileAsText(file)
-        
+
         const fileArray = fileContents.split('\n')
         const songObj = {}
         
         const titleBreak = fileArray.findIndex(el => el === '')
         const creditsBreak = fileArray.findLastIndex(el => el === '')
-        
+
         songObj.title = fileArray[titleBreak - 1]
         songObj.authors = fileArray[creditsBreak + 1]
         songObj.cclinum = fileArray.find(el => el.includes('CCLI Song'))
@@ -38,7 +38,7 @@ const handleUpload = async(event) => {
         songObj.copyright = fileArray.find(el => el.includes('Words') || el.includes('Music'))
         songObj.verses = []
 
-        let lyricsArray = fileArray.slice(titleBreak + 1, creditsBreak)
+        let lyricsArray = fileArray.slice(titleBreak + 1, creditsBreak + 1)
 
         do {
             songObj.verses.push(getVerses(0, lyricsArray))
@@ -51,7 +51,7 @@ const handleUpload = async(event) => {
             for (let i = 0; i <= verseBreak; i++) arr.shift()
 
             lyrics.forEach(line => line.replaceAll(/.,:;/g,''));
-            
+
             return {type: lyrics[0], lyrics: lyrics.slice(1)}
         }
 
@@ -74,7 +74,7 @@ const postLyrics = async(event) => {
 
 const createDoc = async(file) => {
     try {
-        const res = await fetch('/songs/postSongs', {
+        await fetch('/songs/postSongs', {
             method: 'post',
             headers: {'Content-type': 'application/json'},
             body: JSON.stringify({
@@ -87,8 +87,9 @@ const createDoc = async(file) => {
                 'versesFromJSFile': file.verses,
             })
         })
-        const data = await res.json()
-        console.log(data)
+        
+        window.dispatchEvent(new Event('load'))
+
     } catch (e) {
         console.log(e)
     }
@@ -162,12 +163,17 @@ const showSong = (data, section) => {
     songCCLINum.className = 'cclinum'
     songCCLINum.innerHTML = data.cclinum
     songCCLI.appendChild(songCCLINum)
-    songCCLI.innerHTML += ', '
     
     const songCCLILic = document.createElement('span')
     songCCLILic.className = 'cclilic'
     songCCLILic.innerHTML = data.cclilic
     songCCLI.appendChild(songCCLILic)
+    
+    if (data.cclinum === '') {
+        songCCLI.classList.add('hidden')
+    } else {
+        songCCLI.innerHTML += ', '
+    }
     
     const songCopyright = document.createElement('p')
     songCopyright.className = 'copyright'
@@ -176,7 +182,7 @@ const showSong = (data, section) => {
     
     data.verses.forEach(verse => {
         const sectionVerse = document.createElement('section')
-        sectionVerse.className = verse.type.includes('Chorus') ? verse.type.toLowerCase() : 'verse'
+        sectionVerse.className = verse.type.toLowerCase().includes('chorus') ? verse.type.toLowerCase() : 'verse'
         songLyrics.appendChild(sectionVerse)
 
         verse.lyrics.forEach((lyric,i) => {
@@ -187,7 +193,7 @@ const showSong = (data, section) => {
             pLyric.className = i === 0 ? 'firstLine' : 'line'
             pLyric.innerHTML = lyric
             sectionVerse.appendChild(divLyric).appendChild(pLyric)
-            if (i===0 && !verse.type.includes('Verse')) pLyric.insertAdjacentHTML('afterend',`<span class='${verse.type.toLowerCase()}'>${verse.type}</span>`)
+            if (i===0 && !verse.type.toLowerCase().includes('verse')) pLyric.insertAdjacentHTML('afterend',`<span class='${verse.type.toLowerCase()}'>${verse.type.toLowerCase()}</span>`)
         })
     })
 }
@@ -228,11 +234,16 @@ const editSelectedSong = (data) => {
     document.getElementById('copyCCLILic').innerHTML = data.cclilic
     document.getElementById('editCopyright').value = data.copyright
 
+    if (data.cclinum === '') {
+        copyCCLI.classList.add('hidden')
+    }
+
     document.getElementById('editLyrics').replaceChildren()
     
-    data.verses.forEach(el => {
+    data.verses.forEach((verse, verseIndex) => {
         const divVerse = document.createElement('div')
         divVerse.className = 'divVerse'
+        divVerse.dataset.sort = verseIndex
         document.getElementById('editLyrics').appendChild(divVerse)
         
         const sectionType = document.createElement('section')
@@ -241,16 +252,17 @@ const editSelectedSong = (data) => {
         
         const inputType = document.createElement('input')
         inputType.className = 'inputType'
-        inputType.value = el.type
+        inputType.value = verse.type
         sectionType.appendChild(inputType)
         
         const sectionLyrics = document.createElement('section')
         sectionLyrics.className = 'sectionLyrics'
         divVerse.appendChild(sectionLyrics)
         
-        el.lyrics.forEach(lyric => {
+        verse.lyrics.forEach((lyric, lyricIndex) => {
             const divLyric = document.createElement('div')
             divLyric.className = 'divLyric'
+            divLyric.dataset.sort = lyricIndex
             sectionLyrics.appendChild(divLyric)
 
             const inputLyric = document.createElement('input')
@@ -282,13 +294,96 @@ const editSong = async(event) => {
         const data = await res.json()
         editSelectedSong(data.selected)
     } catch (e) {
-        console.log(e)
+        const defSongObj = 
+            {
+                title: '',
+                authors: '',
+                cclinum: '',
+                cclilic: '',
+                copyright: '',
+                verses:
+                    [
+                        {
+                            type: '',
+                            lyrics: ['']
+                        }
+                    ]
+            }
+        editSelectedSong(defSongObj)
     }
 
     document.getElementById('editor').classList.remove('hidden')
     if (idAlternate !== '') {
         document.getElementById('btnUpdate').classList.remove('hidden')
     }
+
+    addEditListeners()
+}
+
+function addEditListeners () {
+    document.querySelectorAll('.faVerse').forEach(div => div.addEventListener('click', sortElements))
+    document.querySelectorAll('.faLyric').forEach(div => div.addEventListener('click', sortElements))
+}
+
+function orderElements(event) {
+    let divParent = event.target.closest('div').parentElement
+    let section = divParent.closest('section')
+    let divArray = Array.from(section.children)
+    
+    const sorted = divArray.sort((a,b) => Number(a.dataset.sort) - Number(b.dataset.sort))
+
+    section.innerHTML = ''
+    sorted.forEach(div => section.append(div))
+}
+
+const sortElements = (event) => {
+    if (event.target.classList.contains('up')) {
+        let divParent = event.target.closest('div').parentElement
+        let tempValue = Number(divParent.dataset.sort)
+        divParent.dataset.sort = (--tempValue).toString()
+        tempValue = Number(divParent.previousElementSibling.dataset.sort)
+        divParent.previousElementSibling.dataset.sort = (++tempValue).toString()
+        orderElements(event)
+    } else if (event.target.classList.contains('down')) {
+        let divParent = event.target.closest('div').parentElement
+        let tempValue = Number(divParent.dataset.sort)
+        divParent.dataset.sort = (++tempValue).toString()
+        tempValue = Number(divParent.nextElementSibling.dataset.sort)
+        divParent.nextElementSibling.dataset.sort = (--tempValue).toString()
+        orderElements(event)
+    } else if (event.target.classList.contains('add')) {
+        let divParent = event.target.closest('div').parentElement
+        let divArray = divParent.parentElement.children
+        for (div of divArray) {
+            if (Number(div.dataset.sort) > Number(divParent.dataset.sort)) {
+                let tempValue = Number(div.dataset.sort)
+                div.dataset.sort = (++tempValue).toString()
+            }
+        }
+
+        let divToAdd = divParent.cloneNode(true)
+        let tempValue = Number(divToAdd.dataset.sort)
+        divToAdd.dataset.sort = (++tempValue).toString()
+        const inputsToClear = divToAdd.querySelectorAll('input')
+        for (input of inputsToClear) {
+            input.value = ''
+        }
+        divParent.closest('section').appendChild(divToAdd)
+        orderElements(event)
+    } else if (event.target.classList.contains('del')) {
+        let divParent = event.target.closest('div').parentElement
+        let divArray = divParent.parentElement.children
+        for (div of divArray) {
+            if (Number(div.dataset.sort) > Number(divParent.dataset.sort)) {
+                let tempValue = Number(div.dataset.sort)
+                div.dataset.sort = (--tempValue).toString()
+            }
+        }
+        orderElements(event)
+        divParent.remove()
+    }
+
+    addEditListeners()
 }
 
 const discardChanges = () => {
@@ -299,7 +394,7 @@ const docObject = async() => {
     const songObj = {}
     songObj.verses = []
 
-    songObj.parentSong = document.getElementById('selectPrimary').value
+    if (document.getElementById('selectPrimary').value !== '') songObj.parentSong = document.getElementById('selectPrimary').value
     songObj.title = document.getElementById('editTitle').value
     songObj.authors = document.getElementById('editAuthors').value
     songObj.cclinum = document.getElementById('copyCCLINum').innerHTML
@@ -361,6 +456,8 @@ const updateVersion = async () => {
 window.addEventListener('load', listSongs)
     
 document.getElementById('btnFileUpload').addEventListener('click', postLyrics)
+
+document.getElementById('btnCreateNew').addEventListener('click', editSong)
 
 document.getElementById('selectPrimary').addEventListener('change', getSelected)
 

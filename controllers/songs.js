@@ -24,7 +24,7 @@ module.exports = {
                 copyright: req.body.copyrightFromJSFile,
                 verses: req.body.versesFromJSFile
             })
-            res.json('Posted Song!')
+            res.redirect('/')
         } catch (err) {
             console.log(err)
         }
